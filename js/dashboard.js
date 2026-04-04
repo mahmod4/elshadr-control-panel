@@ -1,4 +1,4 @@
-import { collection, query, where, getDocs, getCountFromServer, orderBy, limit } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
+import { collection, query, where, getDocs, getCountFromServer, orderBy, limit } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 import { db } from './firebase-config.js';
 
 // ================================

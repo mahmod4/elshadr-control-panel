@@ -5,11 +5,11 @@
 // يشمل: المصادقة، قاعدة البيانات، التخزين، التحليلات
 
 // استيراد مكتبات Firebase المطلوبة
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js'; // تهيئة التطبيق الأساسي
-import { getAuth } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js'; // خدمة المصادقة
-import { getFirestore } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js'; // قاعدة البيانات
-import { getStorage } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-storage.js'; // خدمة التخزين
-import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js'; // خدمة التحليلات
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js'; // تهيئة التطبيق الأساسي
+import { getAuth } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js'; // خدمة المصادقة
+import { getFirestore } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js'; // قاعدة البيانات
+import { getStorage } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js'; // خدمة التخزين
+import { getAnalytics } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js'; // خدمة التحليلات
 
 // إعدادات مشروع Firebase
 // هذه الإعدادات تربط التطبيق بمشروع Firebase في السحابة
@@ -18,13 +18,13 @@ const env = (typeof window !== 'undefined' && window.RUNTIME_ENV && typeof windo
     : {};
 
 const firebaseConfig = {
-    apiKey: env.FIREBASE_API_KEY || "AIzaSyAWkruoIMbTxD-5DHCpspPY8p2TtZLLmLM", // مفتاح API للمصادقة
-    authDomain: env.FIREBASE_AUTH_DOMAIN || "dashboard-27bc8.firebaseapp.com", // نطاق المصادقة
-    projectId: env.FIREBASE_PROJECT_ID || "dashboard-27bc8", // معرف المشروع الفريد
-    storageBucket: env.FIREBASE_STORAGE_BUCKET || "dashboard-27bc8.firebasestorage.app", // سجل التخزين السحابي
-    messagingSenderId: env.FIREBASE_MESSAGING_SENDER_ID || "707339591256", // معرف إرسال الرسائل
-    appId: env.FIREBASE_APP_ID || "1:707339591256:web:dcc2649182e97249a2742d", // معرف التطبيق
-    measurementId: env.FIREBASE_MEASUREMENT_ID || "G-K8FNNYH4S1" // معرف خدمة التحليلات
+    apiKey: env.FIREBASE_API_KEY || "AIzaSyBBo0T68WHTINwU8VET_Zm1Nc6eLGSd1u0",
+    authDomain: env.FIREBASE_AUTH_DOMAIN || "my-cat-store.firebaseapp.com",
+    databaseURL: env.FIREBASE_DATABASE_URL || "https://my-cat-store-default-rtdb.firebaseio.com",
+    projectId: env.FIREBASE_PROJECT_ID || "my-cat-store",
+    storageBucket: env.FIREBASE_STORAGE_BUCKET || "my-cat-store.firebasestorage.app",
+    messagingSenderId: env.FIREBASE_MESSAGING_SENDER_ID || "472278929296",
+    appId: env.FIREBASE_APP_ID || "1:472278929296:web:f32db52f737216da856d15"
 };
 
 // تهيئة تطبيق Firebase

@@ -1,4 +1,4 @@
-import { collection, addDoc, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
+import { collection, addDoc, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 import { db } from './firebase-config.js';
 
 export async function loadNotifications() {

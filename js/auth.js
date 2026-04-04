@@ -10,8 +10,8 @@
 // - حماية لوحة التحكم من الوصول غير المصرح به
 
 // استيراد مكتبات Firebase المطلوبة للمصادقة وقاعدة البيانات
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js'; // دوال المصادقة
-import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js'; // دوال قاعدة البيانات
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js'; // دوال المصادقة
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js'; // دوال قاعدة البيانات
 import { auth, db } from './firebase-config.js'; // خدمات Firebase المهيأة
 
 // التحقق مما إذا كان المستخدم لديه صلاحيات الأدمن

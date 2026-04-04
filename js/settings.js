@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
+import { doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 import { uploadImageToCloudinary, deleteImageFromCloudinary } from './cloudinary-config.js';
 import { db } from './firebase-config.js';
 
