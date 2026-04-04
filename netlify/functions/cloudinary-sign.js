@@ -1,5 +1,12 @@
 const crypto = require('crypto');
 
+function normalizeUploadPreset(raw) {
+  const s = (typeof raw === 'string' ? raw : '').trim();
+  if (!s) return 'my-store';
+  if (s.startsWith('mediaflows_')) return 'my-store';
+  return s;
+}
+
 function sign(params, apiSecret) {
   const keys = Object.keys(params)
     .filter((k) => params[k] !== undefined && params[k] !== null && params[k] !== '')
@@ -38,11 +45,12 @@ exports.handler = async function handler(event) {
     const body = event.body ? JSON.parse(event.body) : {};
     const mode = body.mode || 'upload';
 
-    const apiSecret = process.env.CLOUDINARY_API_SECRET || 'gwwRDcbDIKPdu1-f6jSyLsCu2yk';
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
     if (!apiSecret) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: 'Missing CLOUDINARY_API_SECRET' })
+        headers,
+        body: JSON.stringify({ error: 'Missing CLOUDINARY_API_SECRET (أضف المفتاح في Netlify → Site settings → Environment variables)' })
       };
     }
 
@@ -50,7 +58,9 @@ exports.handler = async function handler(event) {
 
     if (mode === 'upload') {
       const folder = body.folder || process.env.CLOUDINARY_FOLDER || 'products';
-      const upload_preset = body.upload_preset || process.env.CLOUDINARY_UPLOAD_PRESET || 'my-store';
+      const upload_preset = normalizeUploadPreset(
+        body.upload_preset || process.env.CLOUDINARY_UPLOAD_PRESET || 'my-store'
+      );
 
       // Cloudinary requires specific order for signing
       const paramsToSign = { 

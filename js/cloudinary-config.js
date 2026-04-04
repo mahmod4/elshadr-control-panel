@@ -4,12 +4,20 @@ const env = (typeof window !== 'undefined' && window.RUNTIME_ENV && typeof windo
     ? window.RUNTIME_ENV
     : {};
 
+function normalizeUploadPreset(raw) {
+    const s = (typeof raw === 'string' ? raw : '').trim();
+    if (!s) return 'my-store';
+    // قيم من قوالب أخرى (مثل mediaflows_…) غالباً غير موجودة على حساب Cloudinary الحالي
+    if (s.startsWith('mediaflows_')) return 'my-store';
+    return s;
+}
+
 const cloudinaryConfig = {
-    cloudName: env.CLOUDINARY_CLOUD_NAME || 'kdwe', // Cloud name الصحيح
-    apiKey: env.CLOUDINARY_API_KEY || '915513453848396', // API Key الصحيح
+    cloudName: (env.CLOUDINARY_CLOUD_NAME || '').trim() || 'kdwe',
+    apiKey: (env.CLOUDINARY_API_KEY || '').trim() || '915513453848396',
     apiSecret: '', // API Secret يتم التعامل معه داخل Netlify Function (لا يوضع في المتصفح)
-    uploadPreset: env.CLOUDINARY_UPLOAD_PRESET || 'mediaflows_563c07f6-377f-4584-9f65-5692fbdd8255', // Upload preset الصحيح
-    folder: env.CLOUDINARY_FOLDER || 'images/chader' // مجلد الصور
+    uploadPreset: normalizeUploadPreset(env.CLOUDINARY_UPLOAD_PRESET),
+    folder: (env.CLOUDINARY_FOLDER || '').trim() || 'images/chader'
 };
 
 async function getCloudinarySignature(mode, payload) {
@@ -107,8 +115,8 @@ async function uploadImageToCloudinary(file, productId = null) {
         // رسائل خطأ مفصلة
         if (error.message.includes('Missing required parameter')) {
             throw new Error('معاملات مفقودة. يرجى التحقق من إعدادات Cloudinary (unsigned upload).');
-        } else if (error.message.includes('Invalid upload preset')) {
-            throw new Error('إعدادات الرفع غير صالحة. يرجى التحقق من upload preset (my-store).');
+        } else if (error.message.includes('Invalid upload preset') || error.message.includes('Upload preset not found')) {
+            throw new Error('اسم الـ upload preset غير موجود في Cloudinary أو لا يطابق المتغير CLOUDINARY_UPLOAD_PRESET في Netlify. أنشئ preset موقّع/غير موقّع بنفس الاسم في لوحة Cloudinary أو صحّح المتغير.');
         } else if (error.message.includes('File size too large')) {
             throw new Error('حجم الملف كبير جداً. الحد الأقصى هو 10 ميجابايت.');
         } else if (error.message.includes('Unauthorized')) {

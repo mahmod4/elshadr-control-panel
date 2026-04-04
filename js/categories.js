@@ -2,6 +2,12 @@ import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, getDoc, query, 
 import { db } from './firebase-config.js';
 import { uploadImageToCloudinary, deleteImageFromCloudinary } from './cloudinary-config.js';
 
+const PLACEHOLDER_CATEGORY_ICON =
+    'data:image/svg+xml,' +
+    encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="#e5e7eb" width="40" height="40"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#9ca3af" font-size="8" font-family="system-ui,sans-serif">—</text></svg>'
+    );
+
 export async function loadCategories() {
     const pageContent = document.getElementById('pageContent');
     
@@ -47,7 +53,7 @@ export async function loadCategories() {
                                         </button>
                                     </td>
                                     <td>
-                                        <img src="${category.iconUrl || 'https://via.placeholder.com/40'}" alt="${category.name}" class="w-10 h-10 object-contain rounded bg-white" />
+                                        <img src="${category.iconUrl || PLACEHOLDER_CATEGORY_ICON}" alt="${category.name}" class="w-10 h-10 object-contain rounded bg-white" />
                                     </td>
                                     <td>${category.name}</td>
                                     <td>${category.description || '-'}</td>

@@ -3,6 +3,12 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gsta
 import { db, storage } from './firebase-config.js';
 import { uploadImageToCloudinary, deleteImageFromCloudinary, uploadImageWithUI } from './cloudinary-config.js';
 
+const PLACEHOLDER_PRODUCT_IMG =
+    'data:image/svg+xml,' +
+    encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50"><rect fill="#e5e7eb" width="50" height="50"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" fill="#9ca3af" font-size="9" font-family="system-ui,sans-serif">—</text></svg>'
+    );
+
 // ================================
 // صفحة: المنتجات
 // المسؤول عن:
@@ -82,7 +88,7 @@ export async function loadProducts() {
                                         <input type="checkbox" class="product-checkbox" value="${product.id}">
                                     </td>
                                     <td>
-                                        <img src="${product.image || 'https://via.placeholder.com/50'}" 
+                                        <img src="${product.image || PLACEHOLDER_PRODUCT_IMG}" 
                                              alt="${product.name}" 
                                              class="w-12 h-12 object-cover rounded">
                                     </td>
