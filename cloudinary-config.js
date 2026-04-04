@@ -5,10 +5,10 @@ const env = (typeof window !== 'undefined' && window.RUNTIME_ENV && typeof windo
     : {};
 
 const cloudinaryConfig = {
-    cloudName: env.CLOUDINARY_CLOUD_NAME || 'ddm0j229o', // Cloud name
-    apiKey: env.CLOUDINARY_API_KEY || '915513453848396', // API Key
+    cloudName: env.CLOUDINARY_CLOUD_NAME || 'kdwe', // Cloud name الصحيح
+    apiKey: env.CLOUDINARY_API_KEY || '915513453848396', // API Key الصحيح
     apiSecret: '', // API Secret يتم التعامل معه داخل Netlify Function (لا يوضع في المتصفح)
-    uploadPreset: env.CLOUDINARY_UPLOAD_PRESET || 'my-store', // Upload preset
+    uploadPreset: env.CLOUDINARY_UPLOAD_PRESET || 'my-store', // الـ preset الجديد
     folder: env.CLOUDINARY_FOLDER || 'images/chader' // مجلد الصور
 };
 
