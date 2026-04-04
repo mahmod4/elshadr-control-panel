@@ -6,19 +6,39 @@ function sign(params, apiSecret) {
     .sort();
 
   const toSign = keys.map((k) => `${k}=${params[k]}`).join('&');
+  console.log('String to sign:', toSign);
   return crypto.createHash('sha1').update(toSign + apiSecret).digest('hex');
 }
 
 exports.handler = async function handler(event) {
+  // Add CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers,
+      body: ''
+    };
+  }
+
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return { 
+      statusCode: 405, 
+      headers,
+      body: 'Method Not Allowed' 
+    };
   }
 
   try {
     const body = event.body ? JSON.parse(event.body) : {};
     const mode = body.mode || 'upload';
 
-    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET || 'gwwRDcbDIKPdu1-f6jSyLsCu2yk';
     if (!apiSecret) {
       return {
         statusCode: 500,
@@ -32,13 +52,25 @@ exports.handler = async function handler(event) {
       const folder = body.folder || process.env.CLOUDINARY_FOLDER || 'products';
       const upload_preset = body.upload_preset || process.env.CLOUDINARY_UPLOAD_PRESET || '';
 
-      const paramsToSign = { folder, timestamp };
-      if (upload_preset) paramsToSign.upload_preset = upload_preset;
-
+      // Cloudinary requires specific order for signing
+      const paramsToSign = { 
+        folder, 
+        timestamp, 
+        upload_preset 
+      };
+      
       const signature = sign(paramsToSign, apiSecret);
+      console.log('Upload signature params:', paramsToSign);
+      console.log('Generated signature:', signature);
+      console.log('API Secret exists:', !!apiSecret);
+      
       return {
         statusCode: 200,
-        headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+        headers: { 
+          'content-type': 'application/json; charset=utf-8', 
+          'cache-control': 'no-store',
+          'Access-Control-Allow-Origin': '*'
+        },
         body: JSON.stringify({ signature, timestamp, folder, upload_preset })
       };
     }
@@ -52,7 +84,11 @@ exports.handler = async function handler(event) {
       const signature = sign(paramsToSign, apiSecret);
       return {
         statusCode: 200,
-        headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+        headers: { 
+          'content-type': 'application/json; charset=utf-8', 
+          'cache-control': 'no-store',
+          'Access-Control-Allow-Origin': '*'
+        },
         body: JSON.stringify({ signature, timestamp, public_id })
       };
     }
