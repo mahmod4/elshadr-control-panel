@@ -4,20 +4,33 @@ const env = (typeof window !== 'undefined' && window.RUNTIME_ENV && typeof windo
     ? window.RUNTIME_ENV
     : {};
 
+/**
+ * ثوابت الحساب (حتى يعمل الرفع بدون متغيرات Netlify).
+ * مهم: عمود «Key Name» (مثل kdwe) في صفحة API Keys ليس بالضرورة «Cloud name».
+ * Cloud name يظهر في نفس صفحة بيئة المنتج (Product environment) — رابط الرفع api.cloudinary.com/v1_1/هنا/upload
+ * المفتاح 9155… مرتبط عادة بسحابة ddm0j229o؛ إن كان عندك cloud name آخر غيّر القيمة أدناه فقط.
+ */
+const CLOUDINARY_DEFAULTS = {
+    cloudName: 'ddm0j229o',
+    apiKey: '915513453848396',
+    uploadPreset: 'my-store',
+    folder: 'images/chader'
+};
+
 function normalizeUploadPreset(raw) {
     const s = (typeof raw === 'string' ? raw : '').trim();
-    if (!s) return 'my-store';
+    if (!s) return CLOUDINARY_DEFAULTS.uploadPreset;
     // قيم من قوالب أخرى (مثل mediaflows_…) غالباً غير موجودة على حساب Cloudinary الحالي
-    if (s.startsWith('mediaflows_')) return 'my-store';
+    if (s.startsWith('mediaflows_')) return CLOUDINARY_DEFAULTS.uploadPreset;
     return s;
 }
 
 const cloudinaryConfig = {
-    cloudName: (env.CLOUDINARY_CLOUD_NAME || '').trim() || 'kdwe',
-    apiKey: (env.CLOUDINARY_API_KEY || '').trim() || '915513453848396',
-    apiSecret: '', // API Secret يتم التعامل معه داخل Netlify Function (لا يوضع في المتصفح)
+    cloudName: (env.CLOUDINARY_CLOUD_NAME || '').trim() || CLOUDINARY_DEFAULTS.cloudName,
+    apiKey: (env.CLOUDINARY_API_KEY || '').trim() || CLOUDINARY_DEFAULTS.apiKey,
+    apiSecret: '', // الـ Secret فقط في Netlify Function (لا يُوضع في المتصفح)
     uploadPreset: normalizeUploadPreset(env.CLOUDINARY_UPLOAD_PRESET),
-    folder: (env.CLOUDINARY_FOLDER || '').trim() || 'images/chader'
+    folder: (env.CLOUDINARY_FOLDER || '').trim() || CLOUDINARY_DEFAULTS.folder
 };
 
 async function getCloudinarySignature(mode, payload) {
@@ -119,8 +132,10 @@ async function uploadImageToCloudinary(file, productId = null) {
             throw new Error('اسم الـ upload preset غير موجود في Cloudinary أو لا يطابق المتغير CLOUDINARY_UPLOAD_PRESET في Netlify. أنشئ preset موقّع/غير موقّع بنفس الاسم في لوحة Cloudinary أو صحّح المتغير.');
         } else if (error.message.includes('File size too large')) {
             throw new Error('حجم الملف كبير جداً. الحد الأقصى هو 10 ميجابايت.');
+        } else if (error.message.includes('Invalid cloud_name')) {
+            throw new Error('اسم السحابة cloud name غير صحيح. في Netlify اضبط CLOUDINARY_CLOUD_NAME ليطابق القيمة أعلى لوحة Cloudinary (نفس الحساب الذي فيه الـ API Key).');
         } else if (error.message.includes('Unauthorized')) {
-            throw new Error('مفتاح API غير صالح. يرجى التحقق من إعدادات Cloudinary.');
+            throw new Error('رفض Cloudinary للطلب: تحقق من cloud name وAPI Key وسر التوقيع (CLOUDINARY_API_SECRET) على Netlify.');
         } else if (error.message.includes('Not allowed')) {
             throw new Error('نوع الملف غير مسموح. يرجى استخدام الصور فقط.');
         }

@@ -1,5 +1,8 @@
 const crypto = require('crypto');
 
+// يطابق مفتاح «kdwe» في لوحة API Keys — يُفضّل نقله لاحقاً إلى متغير Netlify CLOUDINARY_API_SECRET
+const CLOUDINARY_API_SECRET_FALLBACK = 'gwwRDcbDIKPdu1-f6jSyLsCu2yk';
+
 function normalizeUploadPreset(raw) {
   const s = (typeof raw === 'string' ? raw : '').trim();
   if (!s) return 'my-store';
@@ -45,19 +48,19 @@ exports.handler = async function handler(event) {
     const body = event.body ? JSON.parse(event.body) : {};
     const mode = body.mode || 'upload';
 
-    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET || CLOUDINARY_API_SECRET_FALLBACK;
     if (!apiSecret) {
       return {
         statusCode: 500,
         headers,
-        body: JSON.stringify({ error: 'Missing CLOUDINARY_API_SECRET (أضف المفتاح في Netlify → Site settings → Environment variables)' })
+        body: JSON.stringify({ error: 'Missing CLOUDINARY_API_SECRET' })
       };
     }
 
     const timestamp = Math.floor(Date.now() / 1000);
 
     if (mode === 'upload') {
-      const folder = body.folder || process.env.CLOUDINARY_FOLDER || 'products';
+      const folder = body.folder || process.env.CLOUDINARY_FOLDER || 'images/chader';
       const upload_preset = normalizeUploadPreset(
         body.upload_preset || process.env.CLOUDINARY_UPLOAD_PRESET || 'my-store'
       );
