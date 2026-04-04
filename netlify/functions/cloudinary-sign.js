@@ -50,7 +50,7 @@ exports.handler = async function handler(event) {
 
     if (mode === 'upload') {
       const folder = body.folder || process.env.CLOUDINARY_FOLDER || 'products';
-      const upload_preset = body.upload_preset || process.env.CLOUDINARY_UPLOAD_PRESET || '';
+      const upload_preset = body.upload_preset || process.env.CLOUDINARY_UPLOAD_PRESET || 'my-store';
 
       // Cloudinary requires specific order for signing
       const paramsToSign = { 
@@ -63,6 +63,7 @@ exports.handler = async function handler(event) {
       console.log('Upload signature params:', paramsToSign);
       console.log('Generated signature:', signature);
       console.log('API Secret exists:', !!apiSecret);
+      console.log('Using upload preset:', upload_preset);
       
       return {
         statusCode: 200,
