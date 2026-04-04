@@ -9,7 +9,7 @@ const cloudinaryConfig = {
     apiKey: env.CLOUDINARY_API_KEY || '915513453848396', // API Key
     apiSecret: '', // API Secret يتم التعامل معه داخل Netlify Function (لا يوضع في المتصفح)
     uploadPreset: env.CLOUDINARY_UPLOAD_PRESET || 'my-store', // Upload preset
-    folder: env.CLOUDINARY_FOLDER || 'products' // مجلد المنتجات
+    folder: env.CLOUDINARY_FOLDER || 'images/chader' // مجلد الصور
 };
 
 async function getCloudinarySignature(mode, payload) {
