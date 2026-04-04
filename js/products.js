@@ -1,7 +1,7 @@
 import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, getDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js';
 import { db, storage } from './firebase-config.js';
-import { uploadImageToCloudinary, deleteImageFromCloudinary, uploadImageWithUI } from './cloudinary-config.js';
+import { uploadImageToCloudinary, deleteImageFromCloudinary, uploadImageWithUI } from './cloudinary-config.js?v=20260405';
 
 const PLACEHOLDER_PRODUCT_IMG =
     'data:image/svg+xml,' +

@@ -1,5 +1,5 @@
 import { doc, getDoc, updateDoc, setDoc } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
-import { uploadImageToCloudinary, deleteImageFromCloudinary, uploadImageWithUI } from './cloudinary-config.js';
+import { uploadImageToCloudinary, deleteImageFromCloudinary, uploadImageWithUI } from './cloudinary-config.js?v=20260405';
 import { db } from './firebase-config.js';
 
 export async function loadContent() {

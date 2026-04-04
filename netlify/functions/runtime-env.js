@@ -1,3 +1,13 @@
+function sanitizeCloudNameForClient(v) {
+  let s = (v || '').trim();
+  try {
+    s = s.normalize('NFKC');
+  } catch (e) { /* ignore */ }
+  s = s.replace(/[\u200e\u200f\u202a-\u202e]/g, '').trim();
+  if (!s || /^kdwe$/i.test(s)) return '';
+  return s;
+}
+
 exports.handler = async function handler() {
   const env = {
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY || '',
@@ -8,7 +18,7 @@ exports.handler = async function handler() {
     FIREBASE_APP_ID: process.env.FIREBASE_APP_ID || '',
     FIREBASE_MEASUREMENT_ID: process.env.FIREBASE_MEASUREMENT_ID || '',
 
-    CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || '',
+    CLOUDINARY_CLOUD_NAME: sanitizeCloudNameForClient(process.env.CLOUDINARY_CLOUD_NAME),
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || '',
     CLOUDINARY_UPLOAD_PRESET: process.env.CLOUDINARY_UPLOAD_PRESET || '',
     CLOUDINARY_FOLDER: process.env.CLOUDINARY_FOLDER || ''

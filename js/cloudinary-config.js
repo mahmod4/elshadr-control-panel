@@ -17,6 +17,21 @@ const CLOUDINARY_DEFAULTS = {
     folder: 'images/chader'
 };
 
+/** Cloud name الصالح من لوحة Cloudinary — ليس عمود «Key Name» (مثل kdwe). */
+function resolveCloudName(raw) {
+    let s = typeof raw === 'string' ? raw : '';
+    s = s.trim();
+    if (typeof s.normalize === 'function') {
+        try {
+            s = s.normalize('NFKC');
+        } catch (e) { /* ignore */ }
+    }
+    s = s.replace(/[\u200e\u200f\u202a-\u202e]/g, '').trim();
+    if (!s) return CLOUDINARY_DEFAULTS.cloudName;
+    if (/^kdwe$/i.test(s)) return CLOUDINARY_DEFAULTS.cloudName;
+    return s;
+}
+
 function normalizeUploadPreset(raw) {
     const s = (typeof raw === 'string' ? raw : '').trim();
     if (!s) return CLOUDINARY_DEFAULTS.uploadPreset;
@@ -26,7 +41,7 @@ function normalizeUploadPreset(raw) {
 }
 
 const cloudinaryConfig = {
-    cloudName: (env.CLOUDINARY_CLOUD_NAME || '').trim() || CLOUDINARY_DEFAULTS.cloudName,
+    cloudName: resolveCloudName(env.CLOUDINARY_CLOUD_NAME),
     apiKey: (env.CLOUDINARY_API_KEY || '').trim() || CLOUDINARY_DEFAULTS.apiKey,
     apiSecret: '', // الـ Secret فقط في Netlify Function (لا يُوضع في المتصفح)
     uploadPreset: normalizeUploadPreset(env.CLOUDINARY_UPLOAD_PRESET),
@@ -133,7 +148,11 @@ async function uploadImageToCloudinary(file, productId = null) {
         } else if (error.message.includes('File size too large')) {
             throw new Error('حجم الملف كبير جداً. الحد الأقصى هو 10 ميجابايت.');
         } else if (error.message.includes('Invalid cloud_name')) {
-            throw new Error('اسم السحابة cloud name غير صحيح. في Netlify اضبط CLOUDINARY_CLOUD_NAME ليطابق القيمة أعلى لوحة Cloudinary (نفس الحساب الذي فيه الـ API Key).');
+            throw new Error(
+                'اسم السحابة غير مقبول من Cloudinary. افتح لوحة Cloudinary → Settings أو الصفحة الرئيسية للوحة وانسخ «Cloud name» (ليس عمود Key Name). ' +
+                'إن كان في Netlify متغير CLOUDINARY_CLOUD_NAME خاطئ (مثل kdwe) احذفه أو صحّحه. ' +
+                'يمكنك أيضاً تعديل cloudName داخل CLOUDINARY_DEFAULTS في ملف cloudinary-config.js ليطابق حسابك.'
+            );
         } else if (error.message.includes('Unauthorized')) {
             throw new Error('رفض Cloudinary للطلب: تحقق من cloud name وAPI Key وسر التوقيع (CLOUDINARY_API_SECRET) على Netlify.');
         } else if (error.message.includes('Not allowed')) {

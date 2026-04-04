@@ -2,6 +2,11 @@
   publish = "."
   functions = "netlify/functions"
 
+[[headers]]
+  for = "/js/cloudinary-config.js"
+  [headers.values]
+    Cache-Control = "no-store"
+
 [[redirects]]
   from = "/favicon.ico"
   to = "/favicon.svg"
