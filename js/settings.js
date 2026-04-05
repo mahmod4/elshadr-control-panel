@@ -42,6 +42,14 @@ export async function loadSettings() {
                         </div>
 
                         <div class="form-group">
+                            <label>صورة افتراضية للمنتجات بدون صورة</label>
+                            <input type="file" id="defaultProductImageFile" accept="image/*" onchange="previewDefaultProductImage(event)">
+                            <img id="defaultProductImagePreview" src="${settings.defaultProductImage || ''}" alt=""
+                                 class="mt-3 max-w-xs rounded border border-gray-200 ${settings.defaultProductImage ? '' : 'hidden'}">
+                            <small class="text-gray-500 block mt-1">تُستخدم في المتجر عندما لا يكون للمنتج صورة (القائمة، صفحة المنتج، السلة).</small>
+                        </div>
+
+                        <div class="form-group">
                             <label>وصف المتجر</label>
                             <textarea id="storeDescription" rows="3">${settings.storeDescription || ''}</textarea>
                             <small class="text-gray-500">يظهر في محركات البحث ووسائل التواصل الاجتماعي</small>
@@ -423,6 +431,8 @@ async function getSettings() {
         googleAnalyticsId: '',
         storeLogo: '',
         logoPublicId: '',
+        defaultProductImage: '',
+        defaultProductImagePublicId: '',
         storageProvider: 'cloudinary', // تحديد مزود التخزين الافتراضي
         shippingBaseCost: 0,
         shippingFreeThreshold: 0,
@@ -456,6 +466,8 @@ window.saveGeneralSettings = async function(event) {
     const storeKeywords = document.getElementById('storeKeywords').value;
     const googleAnalyticsId = document.getElementById('googleAnalyticsId').value;
     const logoFile = document.getElementById('storeLogo').files[0];
+    const defaultProductFileInput = document.getElementById('defaultProductImageFile');
+    const defaultProductFile = defaultProductFileInput && defaultProductFileInput.files ? defaultProductFileInput.files[0] : null;
     
     try {
         let storeLogo = '';
@@ -463,6 +475,8 @@ window.saveGeneralSettings = async function(event) {
         const currentSettings = await getSettings();
         storeLogo = currentSettings.storeLogo || '';
         logoPublicId = currentSettings.logoPublicId || '';
+        let defaultProductImage = currentSettings.defaultProductImage || '';
+        let defaultProductImagePublicId = currentSettings.defaultProductImagePublicId || '';
         
         if (logoFile) {
             // Delete old logo from Cloudinary if exists
@@ -482,6 +496,21 @@ window.saveGeneralSettings = async function(event) {
             
             console.log('تم رفع الشعار الجديد إلى Cloudinary بنجاح');
         }
+
+        if (defaultProductFile) {
+            if (defaultProductImagePublicId) {
+                try {
+                    await deleteImageFromCloudinary(defaultProductImagePublicId);
+                    console.log('تم حذف صورة المنتج الافتراضية القديمة من Cloudinary');
+                } catch (error) {
+                    console.warn('خطأ في حذف صورة المنتج الافتراضية القديمة:', error);
+                }
+            }
+            const uploadDef = await uploadImageToCloudinary(defaultProductFile, 'products-default');
+            defaultProductImage = uploadDef.url;
+            defaultProductImagePublicId = uploadDef.publicId;
+            console.log('تم رفع صورة المنتج الافتراضية إلى Cloudinary');
+        }
         
         const settingsData = {
             storeName,
@@ -493,6 +522,8 @@ window.saveGeneralSettings = async function(event) {
             googleAnalyticsId,
             storeLogo,
             logoPublicId,
+            defaultProductImage,
+            defaultProductImagePublicId,
             storageProvider: 'cloudinary', // تحديد مزود التخزين
             updatedAt: new Date()
         };
@@ -720,4 +751,16 @@ window.saveSocialSettings = async function(event) {
         alert('حدث خطأ أثناء حفظ الإعدادات');
     }
 }
+
+window.previewDefaultProductImage = function (event) {
+    const file = event.target.files && event.target.files[0];
+    const preview = document.getElementById('defaultProductImagePreview');
+    if (!file || !preview) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        preview.src = e.target.result;
+        preview.classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+};
 
