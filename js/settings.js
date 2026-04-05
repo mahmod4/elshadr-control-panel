@@ -126,6 +126,59 @@ export async function loadSettings() {
                     </form>
                 </div>
 
+                <div class="card lg:col-span-2">
+                    <h2 class="text-2xl font-bold mb-4">فروع المتجر والموقع على خرائط Google</h2>
+                    <form id="branchesSettingsForm" onsubmit="saveBranchesSettings(event)">
+                        <p class="text-gray-600 mb-3 text-sm">
+                            أضف كل فرع باسم وعنوان. لعرض الموقع على الخريطة: إما الصق <strong>رابط المشاركة</strong> من تطبيق خرائط Google (مشاركة ← نسخ الرابط)،
+                            أو أدخل <strong>خط العرض وخط الطول</strong> (يظهران عند الضغط مطولاً على المكان في الخريطة ← ما يظهر في الأسفل).
+                        </p>
+                        <div id="branchesEditorRows" class="flex flex-col gap-2">
+                            ${(Array.isArray(settings.branches) ? settings.branches : []).map((br) => {
+                                const name = (br && br.name) ? String(br.name).replace(/"/g, '&quot;').replace(/</g, '&lt;') : '';
+                                const addr = (br && br.address) ? String(br.address).replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
+                                const mapsUrl = (br && br.mapsUrl) ? String(br.mapsUrl).replace(/"/g, '&quot;') : '';
+                                const lat = (br && br.lat != null && br.lat !== '') ? String(br.lat).replace(/"/g, '&quot;') : '';
+                                const lng = (br && br.lng != null && br.lng !== '') ? String(br.lng).replace(/"/g, '&quot;') : '';
+                                return `
+                                <div class="border rounded-lg p-4 bg-gray-50" data-branch-row="1">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div class="md:col-span-2">
+                                            <label class="text-sm text-gray-600 block mb-1">اسم الفرع</label>
+                                            <input type="text" class="branchName w-full px-3 py-2 border rounded-lg" value="${name}" placeholder="مثال: فرع وسط البلد">
+                                        </div>
+                                        <div class="md:col-span-2">
+                                            <label class="text-sm text-gray-600 block mb-1">العنوان</label>
+                                            <textarea class="branchAddress w-full px-3 py-2 border rounded-lg" rows="2" placeholder="العنوان كما يظهر للزبائن">${addr}</textarea>
+                                        </div>
+                                        <div class="md:col-span-2">
+                                            <label class="text-sm text-gray-600 block mb-1">رابط Google Maps (اختياري)</label>
+                                            <input type="url" class="branchMapsUrl w-full px-3 py-2 border rounded-lg" value="${mapsUrl}" placeholder="https://maps.app.goo.gl/... أو https://goo.gl/maps/...">
+                                        </div>
+                                        <div>
+                                            <label class="text-sm text-gray-600 block mb-1">خط العرض (Latitude)</label>
+                                            <input type="text" class="branchLat w-full px-3 py-2 border rounded-lg" value="${lat}" placeholder="30.0444">
+                                        </div>
+                                        <div>
+                                            <label class="text-sm text-gray-600 block mb-1">خط الطول (Longitude)</label>
+                                            <input type="text" class="branchLng w-full px-3 py-2 border rounded-lg" value="${lng}" placeholder="31.2357">
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-end mt-3">
+                                        <button type="button" class="btn-danger" onclick="removeBranchRow(this)">حذف هذا الفرع</button>
+                                    </div>
+                                </div>`;
+                            }).join('')}
+                        </div>
+                        <button type="button" class="btn-primary w-full mt-3" onclick="addBranchRow()">
+                            <i class="fas fa-plus ml-2"></i>إضافة فرع
+                        </button>
+                        <button type="submit" class="btn-primary w-full mt-3">
+                            <i class="fas fa-save ml-2"></i>حفظ الفروع
+                        </button>
+                    </form>
+                </div>
+
                 <!-- Shipping Settings -->
                 <div class="card">
                     <h2 class="text-2xl font-bold mb-4">إعدادات الشحن</h2>
@@ -387,6 +440,92 @@ window.removeCustomerFieldRow = function (btn) {
     }
 }
 
+window.collectBranchesFromForm = function () {
+    const rows = Array.from(document.querySelectorAll('#branchesEditorRows [data-branch-row]'));
+    const result = [];
+    rows.forEach((row) => {
+        const nameEl = row.querySelector('.branchName');
+        const addrEl = row.querySelector('.branchAddress');
+        const mapsEl = row.querySelector('.branchMapsUrl');
+        const latEl = row.querySelector('.branchLat');
+        const lngEl = row.querySelector('.branchLng');
+        const name = nameEl && typeof nameEl.value === 'string' ? nameEl.value.trim() : '';
+        const address = addrEl && typeof addrEl.value === 'string' ? addrEl.value.trim() : '';
+        const mapsUrl = mapsEl && typeof mapsEl.value === 'string' ? mapsEl.value.trim() : '';
+        const latStr = latEl && typeof latEl.value === 'string' ? latEl.value.trim().replace(',', '.') : '';
+        const lngStr = lngEl && typeof lngEl.value === 'string' ? lngEl.value.trim().replace(',', '.') : '';
+        let lat = parseFloat(latStr);
+        let lng = parseFloat(lngStr);
+        if (!Number.isFinite(lat)) lat = null;
+        if (!Number.isFinite(lng)) lng = null;
+        if (!name && !address && !mapsUrl && (lat == null || lng == null)) return;
+        const item = { name, address };
+        if (mapsUrl) item.mapsUrl = mapsUrl;
+        if (lat != null && lng != null) {
+            item.lat = lat;
+            item.lng = lng;
+        }
+        result.push(item);
+    });
+    return result;
+};
+
+window.addBranchRow = function () {
+    const rows = document.getElementById('branchesEditorRows');
+    if (!rows) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'border rounded-lg p-4 bg-gray-50';
+    wrap.setAttribute('data-branch-row', '1');
+    wrap.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="md:col-span-2">
+                <label class="text-sm text-gray-600 block mb-1">اسم الفرع</label>
+                <input type="text" class="branchName w-full px-3 py-2 border rounded-lg" placeholder="مثال: فرع وسط البلد">
+            </div>
+            <div class="md:col-span-2">
+                <label class="text-sm text-gray-600 block mb-1">العنوان</label>
+                <textarea class="branchAddress w-full px-3 py-2 border rounded-lg" rows="2" placeholder="العنوان كما يظهر للزبائن"></textarea>
+            </div>
+            <div class="md:col-span-2">
+                <label class="text-sm text-gray-600 block mb-1">رابط Google Maps (اختياري)</label>
+                <input type="url" class="branchMapsUrl w-full px-3 py-2 border rounded-lg" placeholder="https://maps.app.goo.gl/...">
+            </div>
+            <div>
+                <label class="text-sm text-gray-600 block mb-1">خط العرض (Latitude)</label>
+                <input type="text" class="branchLat w-full px-3 py-2 border rounded-lg" placeholder="30.0444">
+            </div>
+            <div>
+                <label class="text-sm text-gray-600 block mb-1">خط الطول (Longitude)</label>
+                <input type="text" class="branchLng w-full px-3 py-2 border rounded-lg" placeholder="31.2357">
+            </div>
+        </div>
+        <div class="flex justify-end mt-3">
+            <button type="button" class="btn-danger" onclick="removeBranchRow(this)">حذف هذا الفرع</button>
+        </div>`;
+    rows.appendChild(wrap);
+};
+
+window.removeBranchRow = function (btn) {
+    const row = btn && btn.closest ? btn.closest('[data-branch-row]') : null;
+    if (row && row.parentNode) row.parentNode.removeChild(row);
+};
+
+window.saveBranchesSettings = async function (event) {
+    event.preventDefault();
+    const branches = window.collectBranchesFromForm();
+    try {
+        await setDoc(doc(db, 'settings', 'general'), {
+            branches,
+            updatedAt: new Date()
+        }, { merge: true });
+        alert('تم حفظ فروع المتجر بنجاح');
+        loadSettings();
+    } catch (error) {
+        console.error('Error saving branches:', error);
+        alert('حدث خطأ أثناء حفظ الفروع');
+    }
+};
+
 window.collectCustomerFieldsFromForm = function () {
     const rows = Array.from(document.querySelectorAll('#customerFieldsRows [data-customer-field-row]'));
     const result = [];
@@ -451,7 +590,8 @@ async function getSettings() {
         gridColumnsMobile: 2,
         gridColumnsTablet: 3,
         gridColumnsDesktop: 4,
-        heroScrollImages: []
+        heroScrollImages: [],
+        branches: []
     };
 }
 
