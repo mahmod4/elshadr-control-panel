@@ -1,3 +1,44 @@
+/**
+ * ========================================
+ * إدارة الأقسام - Categories Management
+ * ========================================
+ * 
+ * Purpose: إدارة أقسام المنتجات في لوحة تحكم المتجر
+ * Usage: صفحة الأقسام في لوحة التحكم لتنظيم المنتجات
+ * Features: CRUD كامل، أيقونات، ترتيب، تصنيف
+ * 
+ * يحتوي هذا الملف على:
+ * - عرض جميع أقسام المتجر
+ * - إضافة أقسام جديدة مع أيقونات
+ * - تعديل بيانات الأقسام الموجودة
+ * - حذف الأقسام غير المستخدمة
+ * - ترتيب الأقسام وتنظيمها
+ * - رفع أيقونات الأقسام
+ * 
+ * الوظائف الرئيسية:
+ * - loadCategories(): تحميل وعرض الأقسام
+ * - getCategories(): جلب قائمة الأقسام
+ * - addCategory(): إضافة قسم جديد
+ * - updateCategory(): تحديث قسم موجود
+ * - deleteCategory(): حذف قسم
+ * - uploadCategoryIcon(): رفع أيقونة القسم
+ * 
+ * Features:
+ * - رفع الأيقونات عبر Cloudinary
+ * - التحقق من صحة البيانات
+ * - منع حذف الأقسام المستخدمة
+ * - عرض المنتجات في كل قسم
+ * - ترتيب الأقسام بالسحب والإفلات
+ * 
+ * Dependencies:
+ * - Firebase Firestore للأقسام
+ * - Cloudinary للأيقونات
+ * - firebase-config.js للإعدادات
+ * 
+ * Author: نظام المتجر الإلكتروني
+ * Version: 1.0.0
+ */
+
 import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, getDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 import { db } from './firebase-config.js';
 import { uploadImageToCloudinary, deleteImageFromCloudinary } from './cloudinary-config.js?v=20260405';

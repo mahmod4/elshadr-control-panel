@@ -518,7 +518,7 @@ window.saveBranchesSettings = async function (event) {
             branches,
             updatedAt: new Date()
         }, { merge: true });
-        alert('تم حفظ فروع المتجر بنجاح');
+        alert('تم حفظ فروع متجر الشادر بنجاح');
         loadSettings();
     } catch (error) {
         console.error('Error saving branches:', error);
@@ -764,7 +764,7 @@ window.saveLayoutSettings = async function(event) {
         };
 
         await setDoc(doc(db, 'settings', 'general'), settingsData, { merge: true });
-        alert('تم حفظ إعدادات عرض المتجر بنجاح');
+        alert('تم حفظ إعدادات عرض متجر الشادر بنجاح');
         loadSettings();
     } catch (error) {
         console.error('Error saving layout settings:', error);
@@ -812,14 +812,13 @@ window.saveShippingSettings = async function(event) {
         console.error('Error saving shipping settings:', error);
         alert('حدث خطأ أثناء حفظ الإعدادات');
     }
-}
 
 // دالة لتحديث إعدادات الوزن في المتجر
 async function updateWeightSettingsInStore(settingsData) {
     try {
-        console.log('تحديث إعدادات الوزن في المتجر:', settingsData);
+        console.log('تحديث إعدادات الوزن في متجر الشادر:', settingsData);
         
-        // إرسال إعدادات الوزن إلى المتجر عبر API أو localStorage
+        // إرسال إعدادات الوزن إلى متجر الشادر عبر API أو localStorage
         const weightSettings = {
             min: settingsData.weightMin,
             max: settingsData.weightMax,
@@ -837,7 +836,7 @@ async function updateWeightSettingsInStore(settingsData) {
         });
         document.dispatchEvent(event);
         
-        console.log('تم تحديث إعدادات الوزن في المتجر بنجاح');
+        console.log('تم تحديث إعدادات الوزن في متجر الشادر بنجاح');
         
     } catch (error) {
         console.error('Error updating weight settings in store:', error);

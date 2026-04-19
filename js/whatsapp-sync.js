@@ -54,14 +54,14 @@ async function updateWhatsAppLinks() {
         // تحديث جميع روابط الواتساب
         document.querySelectorAll('a[href*="wa.me"], a[href*="api.whatsapp.com"]').forEach(link => {
             const cleanNumber = whatsappNumber.replace(/[^\d]/g, '');
-            const message = encodeURIComponent('مرحباً من المتجر');
+            const message = encodeURIComponent('مرحباً بكم في متجر الشادر للخضروات والفواكه');
             link.href = `https://wa.me/${cleanNumber}?text=${message}`;
         });
         
         // تحديث أزرار الواتساب المخصصة
         document.querySelectorAll('[data-whatsapp-btn]').forEach(btn => {
             const cleanNumber = whatsappNumber.replace(/[^\d]/g, '');
-            const message = encodeURIComponent(btn.dataset.message || 'مرحباً من المتجر');
+            const message = encodeURIComponent(btn.dataset.message || 'مرحباً بكم في متجر الشادر للخضروات والفواكه');
             btn.onclick = () => {
                 window.open(`https://wa.me/${cleanNumber}?text=${message}`, '_blank');
             };

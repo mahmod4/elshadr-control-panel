@@ -1,8 +1,8 @@
 // ================================
-// Service Worker للـ PWA
+// Service Worker لمتجر الشادر للخضروات والفواكه
 // ================================
 
-const CACHE_NAME = 'store-v1';
+const CACHE_NAME = 'shadar-store-v1';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -13,8 +13,6 @@ const urlsToCache = [
     '/js/weight-cart.js',
     '/js/weight-products.js',
     '/js/script.js',
-    '/images/default-logo.png',
-    '/images/logo22.png',
     '/manifest.json'
 ];
 
@@ -166,7 +164,7 @@ self.addEventListener('push', function(event) {
     };
     
     event.waitUntil(
-        self.registration.showNotification('المتجر', options)
+        self.registration.showNotification('متجر الشادر', options)
     );
 });
 

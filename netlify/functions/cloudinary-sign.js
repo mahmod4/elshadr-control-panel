@@ -1,3 +1,46 @@
+/**
+ * ========================================
+ * Cloudinary Signing Function - Netlify Function
+ * ========================================
+ * 
+ * Purpose: توقيع طلبات رفع الصور إلى Cloudinary بأمان
+ * Usage: يستخدمه المتصفح للحصول على توقيع آمن لرفع الصور
+ * Security: يمنع كشف API Secret في المتصفح
+ * 
+ * هذه الـ Function تقوم بـ:
+ * - استلام طلبات التوقيع من المتصفح
+ * - توليد توقيع SHA1 آمن للرفع
+ * - التحقق من صحة المعلمات
+ * - منع الوصول غير المصرح به
+ * 
+ * نقطة النهاية: /.netlify/functions/cloudinary-sign
+ * الطريقة: POST
+ * 
+ * المعلمات المطلوبة:
+ * - timestamp: الطابع الزمني للطلب
+ * - public_id: معرف الصورة العامة
+ * - upload_preset: إعدادات الرفع
+ * - folder: مجلد التخزين
+ * 
+ * Features:
+ * - CORS headers للتواصل مع المتصفح
+ * - التحقق من صحة المعلمات
+ * - معالجة الأخطاء
+ * - تسجيل العمليات للتصحيح
+ * 
+ * Security:
+ * - لا يتم كشف API Secret أبداً
+ * - التوقيع يتم فقط من جهة الخادم
+ * - التحقق من مصدر الطلب
+ * 
+ * Dependencies:
+ * - Node.js crypto module
+ * - Netlify Functions runtime
+ * 
+ * Author: نظام المتجر الإلكتروني
+ * Version: 1.0.0
+ */
+
 const crypto = require('crypto');
 
 

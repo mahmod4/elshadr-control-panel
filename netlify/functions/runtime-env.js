@@ -1,3 +1,47 @@
+/**
+ * ========================================
+ * Runtime Environment Function - Netlify Function
+ * ========================================
+ * 
+ * Purpose: توفير متغيرات البيئة للمتصفح بأمان
+ * Usage: يتم تحميله من js/runtime-env-client.js
+ * Security: يمنع كشف البيانات الحساسة في المتصفح
+ * 
+ * هذه الـ Function تقوم بـ:
+ * - قراءة متغيرات البيئة من Netlify
+ * - تنقية البيانات الحساسة
+ * - توفير المتغيرات الآمنة للمتصفح
+ * - منع كشف API Secrets
+ * 
+ * نقطة النهاية: /.netlify/functions/runtime-env
+ * الطريقة: GET
+ * 
+ * المتغيرات التي يتم توفيرها:
+ * - Firebase configuration (بدون API Secrets)
+ * - Cloudinary configuration (بدون API Secret)
+ * - Google Analytics ID
+ * - معلومات الموقع الأساسية
+ * - رقم WhatsApp
+ * 
+ * Features:
+ * - تنقية البيانات الحساسة
+ * - التحقق من صحة القيم
+ * - CORS headers للتواصل مع المتصفح
+ * - معالجة الأخطاء
+ * 
+ * Security:
+ * - لا يتم كشف أي API Secrets
+ * - تنقية أسماء Cloudinary
+ * - التحقق من القيم قبل إرسالها
+ * 
+ * Dependencies:
+ * - Netlify Functions runtime
+ * - Environment variables
+ * 
+ * Author: نظام المتجر الإلكتروني
+ * Version: 1.0.0
+ */
+
 function sanitizeCloudNameForClient(v) {
   let s = (v || '').trim();
   try {

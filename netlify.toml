@@ -1,6 +1,13 @@
+# ========================================
+# Netlify Configuration
+# ========================================
+# Purpose: إعدادات نشر المشروع على Netlify
+# Usage: يحدد كيفية بناء ونشر الموقع والـ Functions
+# Features: نشر static site، functions، redirects، headers
+
 [build]
-  publish = "."
-  functions = "netlify/functions"
+  publish = "."           # مجلد المصدر للملفات الثابتة
+  functions = "netlify/functions"  # مجلد الـ Functions
 
 [[headers]]
   for = "/js/cloudinary-config.js"

@@ -1,6 +1,6 @@
 // ================================
-// مزامنة الإعدادات مع المتجر
-// هذا الملف مسؤول عن مزامنة إعدادات المتجر من لوحة التحكم إلى واجهة المتجر
+// مزامنة الإعدادات مع متجر الشادر
+// هذا الملف مسؤول عن مزامنة إعدادات متجر الشادر من لوحة التحكم إلى واجهة المتجر
 // ================================
 
 // انتظار جاهزية Firebase مع تحسين الأداء
@@ -30,7 +30,7 @@ function waitForFirebase(timeout = 15000) {
 }
 
 // جلب الإعدادات من Firestore
-// هذه الدالة مسؤولة عن جلب إعدادات المتجر من قاعدة البيانات
+// هذه الدالة مسؤولة عن جلب إعدادات متجر الشادر من قاعدة البيانات
 async function fetchSettingsFromFirestore() {
     try {
         // انتظر حتى يصبح Firebase جاهزاً
@@ -57,25 +57,25 @@ async function fetchSettingsFromFirestore() {
     }
 }
 
-// تطبيق الإعدادات على واجهة المتجر
+// تطبيق الإعدادات على واجهة متجر الشادر
 // هذه الدالة تأخذ الإعدادات وتطبقها على عناصر الصفحة
 async function syncStoreSettings() {
     try {
         // جلب الإعدادات من Firestore
         const settings = await fetchSettingsFromFirestore();
         
-        // تحديث اسم المتجر في جميع العناصر التي تحمل خاصية data-store-name
+        // تحديث اسم متجر الشادر في جميع العناصر التي تحمل خاصية data-store-name
         if (settings.storeName) {
             document.querySelectorAll('[data-store-name]').forEach(el => {
                 el.textContent = settings.storeName; // تعيين النص الجديد
             });
         }
         
-        // تحديث شعار المتجر في جميع العناصر التي تحمل خاصية data-store-logo
+        // تحديث شعار متجر الشادر في جميع العناصر التي تحمل خاصية data-store-logo
         if (settings.storeLogo) {
             document.querySelectorAll('[data-store-logo]').forEach(el => {
                 el.src = settings.storeLogo; // تعيين مصدر الصورة الجديد
-                el.alt = settings.storeName || 'المتجر'; // تعيين نص بديل للصورة
+                el.alt = settings.storeName || 'متجر الشادر'; // تعيين نص بديل للصورة
             });
         }
         
@@ -92,7 +92,7 @@ async function syncStoreSettings() {
             document.querySelectorAll('a[href*="wa.me"], a[href*="api.whatsapp.com"]').forEach(el => {
                 const baseUrl = el.href.split('?')[0]; // استخراج الرابط الأساسي
                 // إنشاء رابط واتساب جديد مع رقم الهاتف من الإعدادات
-                el.href = `${baseUrl}?phone=${settings.storePhone.replace(/[^\d]/g, '')}&text=مرحباً من المتجر`;
+                el.href = `${baseUrl}?phone=${settings.storePhone.replace(/[^\d]/g, '')}&text=مرحباً بكم في متجر الشادر للخضروات والفواكه`;
             });
         }
         

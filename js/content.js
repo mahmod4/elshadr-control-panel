@@ -1,3 +1,43 @@
+/**
+ * ========================================
+ * إدارة المحتوى - Content Management
+ * ========================================
+ * 
+ * Purpose: إدارة محتوى المتجر الديناميكي والبانرات
+ * Usage: صفحة المحتوى في لوحة التحكم لإدارة العرض
+ * Features: بانرات، محتوى ديناميكي، صور، نصوص
+ * 
+ * يحتوي هذا الملف على:
+ * - إدارة بانرات المتجر الرئيسية
+ * - تحرير محتوى الصفحات الديناميكي
+ * - رفع وإدارة الصور
+ * - تحديث النصوص والعناوين
+ * - إدارة الروابط والأزرار
+ * 
+ * الوظائف الرئيسية:
+ * - loadContent(): تحميل واجهة إدارة المحتوى
+ * - getContent(): جلب المحتوى الحالي
+ * - saveBanner(): حفظ البانر
+ * - saveContent(): حفظ المحتوى المحدث
+ * - uploadBannerImage(): رفع صورة البانر
+ * - deleteBannerImage(): حذف صورة البانر
+ * 
+ * Features:
+ * - رفع الصور عبر Cloudinary
+ * - معاينة الصور قبل الحفظ
+ * - تحديث فوري للمحتوى
+ * - التحقق من صحة البيانات
+ * - معالجة الأخطاء
+ * 
+ * Dependencies:
+ * - Firebase Firestore للمحتوى
+ * - Cloudinary للصور
+ * - firebase-config.js للإعدادات
+ * 
+ * Author: نظام المتجر الإلكتروني
+ * Version: 1.0.0
+ */
+
 import { doc, getDoc, updateDoc, setDoc } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 import { uploadImageToCloudinary, deleteImageFromCloudinary, uploadImageWithUI } from './cloudinary-config.js?v=20260405';
 import { db } from './firebase-config.js';

@@ -1,3 +1,47 @@
+/**
+ * ========================================
+ * إدارة المنتجات - Products Management
+ * ========================================
+ * 
+ * Purpose: إدارة كاملة للمنتجات في لوحة تحكم المتجر
+ * Usage: صفحة المنتجات في لوحة التحكم لإدارة المخزون
+ * Features: CRUD كامل، بحث، استيراد، تعديل جماعي
+ * 
+ * يحتوي هذا الملف على:
+ * - عرض جميع المنتجات في جدول تفاعلي
+ * - بحث سريع مع دعم اللغة العربية
+ * - إضافة منتجات جديدة مع صور وأسعار
+ * - تعديل بيانات المنتجات الموجودة
+ * - حذف المنتجات غير المرغوب فيها
+ * - استيراد المنتجات من ملف CSV
+ * - التعديل الجماعي للمنتجات
+ * - دعم البيع بالوزن والبيع بالوحدة
+ * 
+ * الوظائف الرئيسية:
+ * - loadProducts(): تحميل وعرض المنتجات
+ * - addProduct(): إضافة منتج جديد
+ * - updateProduct(): تحديث بيانات منتج
+ * - deleteProduct(): حذف منتج
+ * - importProducts(): استيراد من CSV
+ * - bulkEdit(): تعديل جماعي
+ * - searchProducts(): بحث في المنتجات
+ * 
+ * Features:
+ * - رفع الصور عبر Cloudinary
+ * - التحقق من صحة البيانات
+ * - معالجة الأخطاء
+ * - واجهة مستخدم سلسة
+ * 
+ * Dependencies:
+ * - Firebase Firestore لقاعدة البيانات
+ * - Firebase Storage للصور
+ * - Cloudinary لرفع الصور
+ * - firebase-config.js للإعدادات
+ * 
+ * Author: نظام المتجر الإلكتروني
+ * Version: 1.0.0
+ */
+
 import { collection, addDoc, updateDoc, deleteDoc, doc, getDocs, getDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js';
 import { db, storage } from './firebase-config.js';

@@ -1,7 +1,8 @@
 {
-  "name": "متجر إلكتروني",
-  "short_name": "المتجر",
-  "description": "متجر إلكتروني لبيع الخضراوات والفواكه الطازجة",
+  "_comment": "========================================\nProgressive Web App Manifest\n========================================\nPurpose: إعدادات تطبيق الويب التدريجي PWA\nUsage: يسمح بتثبيت متجر الشادر كتطبيق على الهاتف\nFeatures: أيقونات، اختصارات، دعم عربي وRTL",
+  "name": "متجر الشادر للخضروات والفواكه",
+  "short_name": "الشادر",
+  "description": "متجر الشادر للخضروات والفواكه الطازجة - جودة عالية وتوصيل سريع",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -12,14 +13,9 @@
   "dir": "rtl",
   "icons": [
     {
-      "src": "images/logo22.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "images/logo22.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     }
   ],
   "categories": ["shopping", "food"],
@@ -29,14 +25,14 @@
       "short_name": "المنتجات",
       "description": "استعراض جميع المنتجات المتاحة",
       "url": "/#products",
-      "icons": [{ "src": "images/logo22.png", "sizes": "96x96" }]
+      "icons": [{ "src": "logo.svg", "sizes": "any", "type": "image/svg+xml" }]
     },
     {
       "name": "السلة",
       "short_name": "السلة",
       "description": "عرض سلة المشتريات",
       "url": "/#cart",
-      "icons": [{ "src": "images/logo22.png", "sizes": "96x96" }]
+      "icons": [{ "src": "logo.svg", "sizes": "any", "type": "image/svg+xml" }]
     }
   ]
 }
