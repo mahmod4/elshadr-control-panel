@@ -59,18 +59,9 @@ export async function loadContent() {
                             <label>صورة البانر</label>
                             <input type="file" id="bannerImage" accept="image/*" onchange="previewBannerImage(event)">
                             <div id="imagePreviewContainer" class="mt-3">
-                                <div class="relative inline-block">
-                                    <img id="bannerPreview" src="${content.bannerImage || ''}" 
-                                         class="max-w-full rounded ${content.bannerImage ? '' : 'hidden'}" 
-                                         style="max-height: 200px; object-fit: cover;">
-                                    ${content.bannerImage ? `
-                                        <button type="button" onclick="deleteBannerImage()" 
-                                                class="absolute top-2 left-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 transition-colors"
-                                                title="حذف صورة البانر">
-                                            <i class="fas fa-trash text-sm"></i>
-                                        </button>
-                                    ` : ''}
-                                </div>
+                                <img id="bannerPreview" src="${content.bannerImage || ''}" 
+                                     class="max-w-full rounded ${content.bannerImage ? '' : 'hidden'}" 
+                                     style="max-height: 200px; object-fit: cover;">
                                 ${!content.bannerImage ? '<p class="text-gray-500 text-sm">لا توجد صورة بانر حالية</p>' : ''}
                             </div>
                             <small class="text-gray-500">الحجم الأقصى: 5 ميجابايت | الصيغ المسموحة: JPG, PNG, GIF</small>
@@ -232,30 +223,24 @@ window.previewBannerImage = function(event) {
     const preview = document.getElementById('bannerPreview');
     
     if (file) {
-        // التحقق من حجم الملف
-        if (file.size > 5 * 1024 * 1024) {
-            alert('حجم الصورة كبير جداً. الحد الأقصى هو 5 ميجابايت.');
+        // التحقق من حجم الملف (10MB كحد أقصى للبانر)
+        if (file.size > 10 * 1024 * 1024) {
+            alert('حجم الصورة كبير جداً. الحد الأقصى هو 10 ميجابايت');
             event.target.value = ''; // مسح الملف
             return;
         }
         
-        // عرض الصورة المختارة مع زر الحذف
+        // التحقق من نوع الملف
+        if (!file.type.startsWith('image/')) {
+            alert('يرجى اختيار ملف صورة صالح');
+            event.target.value = ''; // مسح الملف
+            return;
+        }
+        
         const reader = new FileReader();
         reader.onload = (e) => {
-            if (previewContainer) {
-                previewContainer.innerHTML = `
-                    <div class="relative inline-block">
-                        <img id="bannerPreview" src="${e.target.result}" 
-                             class="max-w-full rounded" 
-                             style="max-height: 200px; object-fit: cover;">
-                        <button type="button" onclick="clearImagePreview()" 
-                                class="absolute top-2 left-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 transition-colors"
-                                title="إلغاء اختيار الصورة">
-                            <i class="fas fa-times text-sm"></i>
-                        </button>
-                    </div>
-                `;
-            }
+            preview.src = e.target.result;
+            preview.classList.remove('hidden');
             console.log('تم عرض الصورة المختارة بنجاح');
         };
         reader.onerror = () => {
@@ -266,139 +251,13 @@ window.previewBannerImage = function(event) {
     } else {
         // إذا تم مسح الملف، إعادة الصورة الأصلية
         getContent().then(currentContent => {
-            if (previewContainer) {
-                if (currentContent.bannerImage) {
-                    previewContainer.innerHTML = `
-                        <div class="relative inline-block">
-                            <img id="bannerPreview" src="${currentContent.bannerImage}" 
-                                 class="max-w-full rounded" 
-                                 style="max-height: 200px; object-fit: cover;">
-                            <button type="button" onclick="deleteBannerImage()" 
-                                    class="absolute top-2 left-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 transition-colors"
-                                    title="حذف صورة البانر">
-                                <i class="fas fa-trash text-sm"></i>
-                            </button>
-                        </div>
-                    `;
-                } else {
-                    previewContainer.innerHTML = `
-                        <div class="relative inline-block">
-                            <img id="bannerPreview" src="" 
-                                 class="max-w-full rounded hidden" 
-                                 style="max-height: 200px; object-fit: cover;">
-                            <p class="text-gray-500 text-sm">لا توجد صورة بانر حالية</p>
-                        </div>
-                    `;
-                }
-            }
-        });
-    }
-}
-
-// دالة مسح المعاينة (للصور الجديدة غير المحفوظة)
-window.clearImagePreview = function() {
-    const fileInput = document.getElementById('bannerImage');
-    const previewContainer = document.getElementById('imagePreviewContainer');
-    
-    if (fileInput) {
-        fileInput.value = '';
-    }
-    
-    // إعادة عرض الصورة الأصلية أو فارغة
-    getContent().then(currentContent => {
-        if (previewContainer) {
             if (currentContent.bannerImage) {
-                previewContainer.innerHTML = `
-                    <div class="relative inline-block">
-                        <img id="bannerPreview" src="${currentContent.bannerImage}" 
-                             class="max-w-full rounded" 
-                             style="max-height: 200px; object-fit: cover;">
-                        <button type="button" onclick="deleteBannerImage()" 
-                                class="absolute top-2 left-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 transition-colors"
-                                title="حذف صورة البانر">
-                            <i class="fas fa-trash text-sm"></i>
-                        </button>
-                    </div>
-                `;
+                preview.src = currentContent.bannerImage;
+                preview.classList.remove('hidden');
             } else {
-                previewContainer.innerHTML = `
-                    <div class="relative inline-block">
-                        <img id="bannerPreview" src="" 
-                             class="max-w-full rounded hidden" 
-                             style="max-height: 200px; object-fit: cover;">
-                        <p class="text-gray-500 text-sm">لا توجد صورة بانر حالية</p>
-                    </div>
-                `;
+                preview.classList.add('hidden');
             }
-        }
-    });
-}
-
-// دالة حذف صورة البانر
-window.deleteBannerImage = async function() {
-    if (!confirm('هل أنت متأكد من حذف صورة البانر؟ لا يمكن التراجع عن هذا الإجراء.')) {
-        return;
-    }
-    
-    try {
-        console.log('بدء حذف صورة البانر...');
-        
-        // جلب المحتوى الحالي للحصول على معرف الصورة
-        const content = await getContent();
-        
-        if (content.bannerPublicId) {
-            // حذف الصورة من Cloudinary
-            try {
-                console.log('حذف الصورة من Cloudinary:', content.bannerPublicId);
-                await deleteImageFromCloudinary(content.bannerPublicId);
-                console.log('تم حذف الصورة من Cloudinary بنجاح');
-            } catch (cloudinaryError) {
-                console.warn('خطأ في حذف الصورة من Cloudinary:', cloudinaryError);
-                // لا نوقف العملية إذا فشل الحذف من Cloudinary
-            }
-        }
-        
-        // حذف بيانات الصورة من Firestore
-        await updateDoc(doc(db, 'content', 'main'), {
-            bannerImage: '',
-            bannerPublicId: '',
-            updatedAt: new Date()
         });
-        
-        console.log('تم حذف بيانات البانر من Firestore بنجاح');
-        
-        // تحديث الواجهة
-        const preview = document.getElementById('bannerPreview');
-        const previewContainer = document.getElementById('imagePreviewContainer');
-        
-        if (preview) {
-            preview.src = '';
-            preview.classList.add('hidden');
-        }
-        
-        // تحديث حاوية المعاينة
-        if (previewContainer) {
-            previewContainer.innerHTML = `
-                <div class="relative inline-block">
-                    <img id="bannerPreview" src="" 
-                         class="max-w-full rounded hidden" 
-                         style="max-height: 200px; object-fit: cover;">
-                    <p class="text-gray-500 text-sm">لا توجد صورة بانر حالية</p>
-                </div>
-            `;
-        }
-        
-        // مسح حقل الملف
-        const fileInput = document.getElementById('bannerImage');
-        if (fileInput) {
-            fileInput.value = '';
-        }
-        
-        alert('تم حذف صورة البانر بنجاح');
-        
-    } catch (error) {
-        console.error('خطأ في حذف صورة البانر:', error);
-        alert('فشل حذف صورة البانر: ' + (error.message || 'خطأ غير معروف'));
     }
 }
 
