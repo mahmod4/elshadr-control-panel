@@ -18,13 +18,13 @@ const env = (typeof window !== 'undefined' && window.RUNTIME_ENV && typeof windo
     : {};
 
 const firebaseConfig = {
-    apiKey: env.FIREBASE_API_KEY || "AIzaSyBBo0T68WHTINwU8VET_Zm1Nc6eLGSd1u0",
-    authDomain: env.FIREBASE_AUTH_DOMAIN || "my-cat-store.firebaseapp.com",
-    databaseURL: env.FIREBASE_DATABASE_URL || "https://my-cat-store-default-rtdb.firebaseio.com",
-    projectId: env.FIREBASE_PROJECT_ID || "my-cat-store",
-    storageBucket: env.FIREBASE_STORAGE_BUCKET || "my-cat-store.firebasestorage.app",
-    messagingSenderId: env.FIREBASE_MESSAGING_SENDER_ID || "472278929296",
-    appId: env.FIREBASE_APP_ID || "1:472278929296:web:f32db52f737216da856d15"
+    apiKey: env.FIREBASE_API_KEY || "",
+    authDomain: env.FIREBASE_AUTH_DOMAIN || "",
+    databaseURL: env.FIREBASE_DATABASE_URL || "",
+    projectId: env.FIREBASE_PROJECT_ID || "",
+    storageBucket: env.FIREBASE_STORAGE_BUCKET || "",
+    messagingSenderId: env.FIREBASE_MESSAGING_SENDER_ID || "",
+    appId: env.FIREBASE_APP_ID || ""
 };
 
 // تهيئة تطبيق Firebase

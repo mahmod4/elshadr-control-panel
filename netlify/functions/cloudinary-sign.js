@@ -1,7 +1,5 @@
 const crypto = require('crypto');
 
-// يطابق مفتاح «kdwe» في لوحة API Keys — يُفضّل نقله لاحقاً إلى متغير Netlify CLOUDINARY_API_SECRET
-const CLOUDINARY_API_SECRET_FALLBACK = 'gwwRDcbDIKPdu1-f6jSyLsCu2yk';
 
 function normalizeUploadPreset(raw) {
   const s = (typeof raw === 'string' ? raw : '').trim();
@@ -48,7 +46,7 @@ exports.handler = async function handler(event) {
     const body = event.body ? JSON.parse(event.body) : {};
     const mode = body.mode || 'upload';
 
-    const apiSecret = process.env.CLOUDINARY_API_SECRET || CLOUDINARY_API_SECRET_FALLBACK;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
     if (!apiSecret) {
       return {
         statusCode: 500,

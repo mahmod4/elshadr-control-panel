@@ -135,27 +135,17 @@ function getCartFromIndexedDB() {
 
 // إرسال السلة للخادم
 async function sendCartToServer(cart) {
-    const response = await fetch('/api/cart/sync', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ cart })
-    });
-    
-    if (!response.ok) {
-        throw new Error('فشل في مزامنة السلة');
-    }
-    
-    return response.json();
+    // لا يوجد endpoint مخصص لمزامنة السلة حالياً على Netlify.
+    // نعتبر العملية ناجحة محلياً لتجنب أخطاء مزامنة وهمية.
+    return { ok: true, skipped: true, count: Array.isArray(cart) ? cart.length : 0 };
 }
 
 // معالجة الإشعارات
 self.addEventListener('push', function(event) {
     const options = {
         body: event.data ? event.data.text() : 'إشعار جديد',
-        icon: '/images/logo-192.png',
-        badge: '/images/logo-96.png',
+        icon: '/images/logo22.png',
+        badge: '/images/logo22.png',
         vibrate: [100, 50, 100],
         data: {
             dateOfArrival: Date.now(),
@@ -165,12 +155,12 @@ self.addEventListener('push', function(event) {
             {
                 action: 'explore',
                 title: 'استعراض',
-                icon: '/images/checkmark.png'
+                icon: '/images/logo22.png'
             },
             {
                 action: 'close',
                 title: 'إغلاق',
-                icon: '/images/xmark.png'
+                icon: '/images/logo22.png'
             }
         ]
     };

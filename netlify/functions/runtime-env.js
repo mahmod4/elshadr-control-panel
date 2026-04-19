@@ -12,6 +12,7 @@ exports.handler = async function handler() {
   const env = {
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY || '',
     FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN || '',
+    FIREBASE_DATABASE_URL: process.env.FIREBASE_DATABASE_URL || '',
     FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID || '',
     FIREBASE_STORAGE_BUCKET: process.env.FIREBASE_STORAGE_BUCKET || '',
     FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID || '',
@@ -21,7 +22,12 @@ exports.handler = async function handler() {
     CLOUDINARY_CLOUD_NAME: sanitizeCloudNameForClient(process.env.CLOUDINARY_CLOUD_NAME),
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || '',
     CLOUDINARY_UPLOAD_PRESET: process.env.CLOUDINARY_UPLOAD_PRESET || '',
-    CLOUDINARY_FOLDER: process.env.CLOUDINARY_FOLDER || ''
+    CLOUDINARY_FOLDER: process.env.CLOUDINARY_FOLDER || '',
+
+    VITE_GA_MEASUREMENT_ID: process.env.VITE_GA_MEASUREMENT_ID || '',
+    VITE_SITE_NAME: process.env.VITE_SITE_NAME || '',
+    VITE_SITE_URL: process.env.VITE_SITE_URL || '',
+    VITE_WHATSAPP_PHONE: process.env.VITE_WHATSAPP_PHONE || ''
   };
 
   return {
