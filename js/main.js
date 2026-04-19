@@ -11,6 +11,7 @@ import { loadReports } from './reports.js';
 import { loadNotifications } from './notifications.js';
 import { loadContent } from './content.js';
 import { loadSettings } from './settings.js';
+import { loadBranches } from './branches.js';
 
 // ================================
 // ملف التحكم الرئيسي للوحة الإدارة
@@ -46,7 +47,8 @@ const pageTitles = {
     reports: 'التقارير',
     notifications: 'الإشعارات',
     content: 'إدارة المحتوى',
-    settings: 'الإعدادات'
+    settings: 'الإعدادات',
+    branches: 'فروعنا'
 };
 
 // دوال تحميل كل صفحة (ترسم الـ UI وتستدعي Firestore عند الحاجة)
@@ -62,7 +64,8 @@ const pageLoaders = {
     reports: loadReports,
     notifications: loadNotifications,
     content: loadContent,
-    settings: loadSettings
+    settings: loadSettings,
+    branches: loadBranches
 };
 
 // ================================
