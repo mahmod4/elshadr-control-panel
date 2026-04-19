@@ -811,7 +811,10 @@ window.saveShippingSettings = async function(event) {
     } catch (error) {
         console.error('Error saving shipping settings:', error);
         alert('حدث خطأ أثناء حفظ الإعدادات');
+    } finally {
+        // Add this closing bracket
     }
+}
 
 // دالة لتحديث إعدادات الوزن في المتجر
 async function updateWeightSettingsInStore(settingsData) {
@@ -901,5 +904,9 @@ window.previewDefaultProductImage = function (event) {
         preview.classList.remove('hidden');
     };
     reader.readAsDataURL(file);
-};
+}
 
+// Initialize settings when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Settings module loaded');
+});
