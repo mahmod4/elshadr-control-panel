@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Store Logo">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#1a5f7a"/>
+      <stop offset="100%" stop-color="#42c5ea"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="24" fill="url(#g)"/>
+  <path d="M24 52h80l-6 44H30z" fill="#fff" opacity=".95"/>
+  <path d="M34 52c0-16 12-28 30-28s30 12 30 28" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="50" cy="70" r="5" fill="#1a5f7a"/>
+  <circle cx="78" cy="70" r="5" fill="#1a5f7a"/>
+</svg>

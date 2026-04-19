@@ -144,8 +144,8 @@ async function sendCartToServer(cart) {
 self.addEventListener('push', function(event) {
     const options = {
         body: event.data ? event.data.text() : 'إشعار جديد',
-        icon: '/images/logo22.png',
-        badge: '/images/logo22.png',
+        icon: '/logo.svg',
+        badge: '/logo.svg',
         vibrate: [100, 50, 100],
         data: {
             dateOfArrival: Date.now(),
@@ -155,12 +155,12 @@ self.addEventListener('push', function(event) {
             {
                 action: 'explore',
                 title: 'استعراض',
-                icon: '/images/logo22.png'
+                icon: '/logo.svg'
             },
             {
                 action: 'close',
                 title: 'إغلاق',
-                icon: '/images/logo22.png'
+                icon: '/logo.svg'
             }
         ]
     };
