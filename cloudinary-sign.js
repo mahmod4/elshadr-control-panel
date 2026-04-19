@@ -37,11 +37,11 @@ exports.handler = async function handler(event) {
     const body = event.body ? JSON.parse(event.body) : {};
     const mode = body.mode || 'upload';
 
-    const apiSecret = process.env.CLOUDINARY_API_SECRET || 'gwwRDcbDIKPdu1-f6jSyLsCu2yk';
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
     if (!apiSecret) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: 'Missing CLOUDINARY_API_SECRET' })
+        body: JSON.stringify({ error: 'Missing required environment variable: CLOUDINARY_API_SECRET' })
       };
     }
 

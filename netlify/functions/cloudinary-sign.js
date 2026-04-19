@@ -1,7 +1,6 @@
 const crypto = require('crypto');
 
-// يطابق مفتاح «kdwe» في لوحة API Keys — يُفضّل نقله لاحقاً إلى متغير Netlify CLOUDINARY_API_SECRET
-const CLOUDINARY_API_SECRET_FALLBACK = 'gwwRDcbDIKPdu1-f6jSyLsCu2yk';
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET;
 
 function normalizeUploadPreset(raw) {
   const s = (typeof raw === 'string' ? raw : '').trim();
@@ -37,10 +36,10 @@ exports.handler = async function handler(event) {
   }
 
   if (event.httpMethod !== 'POST') {
-    return { 
-      statusCode: 405, 
+    return {
+      statusCode: 405,
       headers,
-      body: 'Method Not Allowed' 
+      body: 'Method Not Allowed'
     };
   }
 
@@ -48,12 +47,13 @@ exports.handler = async function handler(event) {
     const body = event.body ? JSON.parse(event.body) : {};
     const mode = body.mode || 'upload';
 
-    const apiSecret = process.env.CLOUDINARY_API_SECRET || CLOUDINARY_API_SECRET_FALLBACK;
-    if (!apiSecret) {
+    if (!CLOUDINARY_API_SECRET) {
       return {
         statusCode: 500,
         headers,
-        body: JSON.stringify({ error: 'Missing CLOUDINARY_API_SECRET' })
+        body: JSON.stringify({
+          error: 'Missing required environment variable: CLOUDINARY_API_SECRET'
+        })
       };
     }
 
@@ -66,22 +66,22 @@ exports.handler = async function handler(event) {
       );
 
       // Cloudinary requires specific order for signing
-      const paramsToSign = { 
-        folder, 
-        timestamp, 
-        upload_preset 
+      const paramsToSign = {
+        folder,
+        timestamp,
+        upload_preset
       };
-      
-      const signature = sign(paramsToSign, apiSecret);
+
+      const signature = sign(paramsToSign, CLOUDINARY_API_SECRET);
       console.log('Upload signature params:', paramsToSign);
       console.log('Generated signature:', signature);
-      console.log('API Secret exists:', !!apiSecret);
+      console.log('API Secret exists:', !!CLOUDINARY_API_SECRET);
       console.log('Using upload preset:', upload_preset);
-      
+
       return {
         statusCode: 200,
-        headers: { 
-          'content-type': 'application/json; charset=utf-8', 
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
           'cache-control': 'no-store',
           'Access-Control-Allow-Origin': '*'
         },
@@ -95,11 +95,11 @@ exports.handler = async function handler(event) {
         return { statusCode: 400, body: JSON.stringify({ error: 'Missing public_id' }) };
       }
       const paramsToSign = { public_id, timestamp };
-      const signature = sign(paramsToSign, apiSecret);
+      const signature = sign(paramsToSign, CLOUDINARY_API_SECRET);
       return {
         statusCode: 200,
-        headers: { 
-          'content-type': 'application/json; charset=utf-8', 
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
           'cache-control': 'no-store',
           'Access-Control-Allow-Origin': '*'
         },
