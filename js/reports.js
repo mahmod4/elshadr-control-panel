@@ -4,7 +4,14 @@ import { db } from './firebase-config.js';
 export async function loadReports() {
     const pageContent = document.getElementById('pageContent');
     
-    // تدمير أي رسم بياني موجود قبل تحميل الصفحة
+    // تنظيف كامل قبل تحميل الصفحة
+    console.log('تحميل صفحة التقارير - بدء التنظيف...');
+    
+    // إيقاف أي عمليات جارية
+    window.isGeneratingReport = false;
+    window.isChartLoading = false;
+    
+    // تدمير أي رسم بياني موجود
     if (window.dailySalesChartInstance) {
         try {
             window.dailySalesChartInstance.destroy();
@@ -12,7 +19,23 @@ export async function loadReports() {
             console.log('تم تدمير الرسم البياني القديم عند تحميل صفحة التقارير');
         } catch (e) {
             console.warn('خطأ في تدمير الرسم البياني القديم:', e);
+            window.dailySalesChartInstance = null;
         }
+    }
+    
+    // تنظيف أي script tags قديمة لـ Chart.js
+    try {
+        const chartScripts = document.querySelectorAll('script[src*="chart.js"]');
+        if (chartScripts.length > 1) {
+            console.log('العثور على أكثر من Chart.js script، تنظيف...');
+            chartScripts.forEach((script, index) => {
+                if (index > 0) { // الاحتفاظ بالأول فقط
+                    script.remove();
+                }
+            });
+        }
+    } catch (e) {
+        console.warn('خطأ في تنظيف Chart.js scripts:', e);
     }
     
     pageContent.innerHTML = `
@@ -43,7 +66,16 @@ export async function loadReports() {
     `;
 }
 
+// منع استدعاءات متعددة
+window.isGeneratingReport = false;
+
 window.generateReport = async function() {
+    // منع الاستدعاءات المتعددة
+    if (window.isGeneratingReport) {
+        console.log('التقرير قيد الإنشاء بالفعل، يرجى الانتظار...');
+        return;
+    }
+    
     const startDate = document.getElementById('reportStartDate').value;
     const endDate = document.getElementById('reportEndDate').value;
     
@@ -53,7 +85,18 @@ window.generateReport = async function() {
     }
     
     const reportContent = document.getElementById('reportContent');
-    reportContent.innerHTML = '<div class="loading"><div class="spinner"></div><p>جاري إنشاء التقرير...</p></div>';
+    
+    // تعيين حالة التحميل
+    window.isGeneratingReport = true;
+    reportContent.innerHTML = `
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>جاري إنشاء التقرير...</p>
+            <button onclick="cancelReport()" class="btn-secondary text-sm mt-2">
+                <i class="fas fa-times ml-2"></i>إلغاء
+            </button>
+        </div>
+    `;
     
     try {
         const start = new Date(startDate);
@@ -326,7 +369,31 @@ window.generateReport = async function() {
                 </div>
             </div>
         `;
+    } finally {
+        // إعادة تعيين حالة التحميل دائماً
+        window.isGeneratingReport = false;
     }
+}
+
+// دالة لإلغاء إنشاء التقرير
+window.cancelReport = function() {
+    window.isGeneratingReport = false;
+    const reportContent = document.getElementById('reportContent');
+    if (reportContent) {
+        reportContent.innerHTML = `
+            <div class="card">
+                <div class="text-center py-8">
+                    <i class="fas fa-times-circle text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-2">تم إلغاء إنشاء التقرير</h3>
+                    <p class="text-gray-500 mb-4">يمكنك المحاولة مرة أخرى عند الحاجة</p>
+                    <button onclick="generateReport()" class="btn-primary">
+                        <i class="fas fa-chart-bar ml-2"></i>إنشاء تقرير جديد
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+    console.log('تم إلغاء إنشاء التقرير');
 }
 
 function getOrderStatusColor(status) {
@@ -357,31 +424,57 @@ async function loadChartJS() {
         return;
     }
     
+    // التحقق من وجود محاولة تحميل سابقة
+    if (window.isChartLoading) {
+        console.log('Chart.js قيد التحميل بالفعل، انتظار...');
+        // انتظار حتى 5 ثواني
+        let attempts = 0;
+        while (!window.Chart && attempts < 50) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
+        }
+        if (window.Chart) {
+            console.log('تم تحميل Chart.js أثناء الانتظار');
+            return;
+        }
+    }
+    
     console.log('جاري تحميل Chart.js...');
+    window.isChartLoading = true;
     
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
+        
+        let isResolved = false;
+        
         script.onload = () => {
-            console.log('تم تحميل Chart.js بنجاح');
-            resolve();
+            if (!isResolved) {
+                isResolved = true;
+                window.isChartLoading = false;
+                console.log('تم تحميل Chart.js بنجاح');
+                resolve();
+            }
         };
+        
         script.onerror = () => {
-            console.error('فشل تحميل Chart.js');
-            reject(new Error('فشل تحميل Chart.js'));
+            if (!isResolved) {
+                isResolved = true;
+                window.isChartLoading = false;
+                console.error('فشل تحميل Chart.js');
+                reject(new Error('فشل تحميل Chart.js'));
+            }
         };
         
         // إضافة timeout لمنع الانتظار الطويل
         const timeout = setTimeout(() => {
-            if (!window.Chart) {
+            if (!isResolved && !window.Chart) {
+                isResolved = true;
+                window.isChartLoading = false;
+                console.error('انتهت مهلة تحميل Chart.js');
                 reject(new Error('انتهت مهلة تحميل Chart.js'));
             }
-        }, 10000);
-        
-        // تنظيف الـ timeout عند التحميل الناجح
-        script.addEventListener('load', () => {
-            clearTimeout(timeout);
-        });
+        }, 8000); // تقليل المهلة إلى 8 ثواني
         
         document.head.appendChild(script);
     });
@@ -589,6 +682,12 @@ window.exportToPDF = function() {
 
 // دالة لتدمير الرسم البياني عند الخروج من صفحة التقارير
 window.destroyChart = function() {
+    console.log('بدء تدمير الرسم البياني والمصادر...');
+    
+    // إيقاف حالة التحميل
+    window.isGeneratingReport = false;
+    window.isChartLoading = false;
+    
     // Disconnect observer if exists
     try {
         if (window.__reportsChartObserver && typeof window.__reportsChartObserver.disconnect === 'function') {
@@ -599,6 +698,7 @@ window.destroyChart = function() {
         console.warn('خطأ في إيقاف مراقبة الصفحة للرسم البياني:', e);
     }
 
+    // تدمير الرسم البياني
     if (window.dailySalesChartInstance) {
         try {
             window.dailySalesChartInstance.destroy();
@@ -606,6 +706,23 @@ window.destroyChart = function() {
             console.log('تم تدمير الرسم البياني بنجاح');
         } catch (e) {
             console.warn('خطأ في تدمير الرسم البياني:', e);
+            // محاولة إزالة المرجع بشكل قسري
+            window.dailySalesChartInstance = null;
         }
     }
+    
+    // تنظيف canvas إذا وجد
+    try {
+        const canvas = document.getElementById('dailySalesChart');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+    } catch (e) {
+        console.warn('خطأ في تنظيف canvas:', e);
+    }
+    
+    console.log('تم تدمير الرسم البياني والمصادر بنجاح');
 }

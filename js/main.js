@@ -11,6 +11,7 @@ import { loadReports } from './reports.js';
 import { loadNotifications } from './notifications.js';
 import { loadContent } from './content.js';
 import { loadSettings } from './settings.js';
+import { loadBranches } from './branches.js';
 
 // ================================
 // ملف التحكم الرئيسي للوحة الإدارة
@@ -46,6 +47,7 @@ const pageTitles = {
     reports: 'التقارير',
     notifications: 'الإشعارات',
     content: 'إدارة المحتوى',
+    branches: 'إدارة الفروع',
     settings: 'الإعدادات'
 };
 
@@ -62,6 +64,7 @@ const pageLoaders = {
     reports: loadReports,
     notifications: loadNotifications,
     content: loadContent,
+    branches: loadBranches,
     settings: loadSettings
 };
 
