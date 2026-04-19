@@ -94,6 +94,9 @@ export async function loadContent() {
                         <button onclick="openPageModal('terms')" class="btn-primary w-full text-right">
                             <i class="fas fa-file-contract ml-2"></i>الشروط والأحكام
                         </button>
+                        <button onclick="openPageModal('about')" class="btn-primary w-full text-right">
+                            <i class="fas fa-info-circle ml-2"></i>من نحن
+                        </button>
                     </div>
                     
                     <div class="mt-6 p-4 bg-blue-50 rounded-lg">
@@ -191,6 +194,7 @@ async function getContent() {
                 bannerText: '',
                 privacyPolicy: { title: 'سياسة الخصوصية', content: '' },
                 termsAndConditions: { title: 'الشروط والأحكام', content: '' },
+                aboutUs: { title: 'من نحن', content: '' },
                 storageProvider: 'cloudinary', // تحديد مزود التخزين الافتراضي
                 createdAt: new Date()
             };
@@ -207,6 +211,7 @@ async function getContent() {
             bannerText: '',
             privacyPolicy: { title: 'سياسة الخصوصية', content: '' },
             termsAndConditions: { title: 'الشروط والأحكام', content: '' },
+            aboutUs: { title: 'من نحن', content: '' },
             storageProvider: 'cloudinary'
         };
     }
@@ -353,7 +358,8 @@ window.saveBanner = async function(event) {
 window.openPageModal = async function(pageType) {
     const pageNames = {
         'privacy': 'سياسة الخصوصية',
-        'terms': 'الشروط والأحكام'
+        'terms': 'الشروط والأحكام',
+        'about': 'من نحن'
     };
     
     document.getElementById('pageModalTitle').textContent = `تعديل ${pageNames[pageType]}`;
@@ -361,7 +367,8 @@ window.openPageModal = async function(pageType) {
     
     try {
         const content = await getContent();
-        const pageData = content[pageType === 'privacy' ? 'privacyPolicy' : 'termsAndConditions'] || 
+        const pageData = content[pageType === 'privacy' ? 'privacyPolicy' : 
+                            pageType === 'terms' ? 'termsAndConditions' : 'aboutUs'] || 
                         { title: pageNames[pageType], content: '' };
         
         document.getElementById('pageTitle').value = pageData.title || pageNames[pageType];
@@ -389,7 +396,8 @@ window.savePageContent = async function(event) {
         const contentRef = doc(db, 'content', 'main');
         const currentContent = await getContent();
         
-        const fieldName = pageType === 'privacy' ? 'privacyPolicy' : 'termsAndConditions';
+        const fieldName = pageType === 'privacy' ? 'privacyPolicy' : 
+                         pageType === 'terms' ? 'termsAndConditions' : 'aboutUs';
         
         const updateData = {
             [fieldName]: {
