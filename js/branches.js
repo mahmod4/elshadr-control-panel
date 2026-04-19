@@ -1,5 +1,6 @@
 import { collection, getDocs, doc, updateDoc, arrayUnion, arrayRemove } from 'https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js';
 import { db } from './firebase-config.js';
+import { showToast, saveWithFeedback, confirmDialog } from './admin-utils.js';
 
 // نقطة الدخول لتحميل صفحة الفروع داخل عنصر pageContent
 export async function loadBranches() {
@@ -12,81 +13,95 @@ export async function loadBranches() {
         </div>
 
         <!-- الفروع -->
-        <div class="card mb-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800">فروع المتجر</h3>
-                <button onclick="addNewBranch()" class="btn-primary">
-                    <i class="fas fa-plus ml-2"></i>إضافة فرع جديد
-                </button>
+        <div class="admin-card">
+            <div class="card-header">
+                <h3 class="card-title">فروع المتجر</h3>
+                <div class="card-actions">
+                    <button onclick="addNewBranch()" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>إضافة فرع جديد
+                    </button>
+                </div>
             </div>
-            <div id="branchesList" class="space-y-4">
-                <div class="text-center py-8">
+            <div id="branchesList">
+                <div class="loading-state">
                     <div class="spinner"></div>
-                    <p class="text-gray-500 mt-2">جاري تحميل الفروع...</p>
+                    <p class="mt-2">جاري تحميل الفروع...</p>
                 </div>
             </div>
         </div>
 
         <!-- حسابات التواصل الاجتماعي -->
-        <div class="card mb-6">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800">حسابات التواصل الاجتماعي</h3>
-                <button onclick="saveSocialMedia()" class="btn-primary">
-                    <i class="fas fa-save ml-2"></i>حفظ التغييرات
-                </button>
+        <div class="admin-card">
+            <div class="card-header">
+                <h3 class="card-title">حسابات التواصل الاجتماعي</h3>
+                <div class="card-actions">
+                    <button onclick="saveSocialMedia()" class="btn btn-success">
+                        <i class="fas fa-save"></i>حفظ التغييرات
+                    </button>
+                </div>
             </div>
-            <form id="socialMediaForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="form-label">فيسبوك</label>
-                    <input type="url" id="facebookUrl" class="form-input" placeholder="https://facebook.com/yourpage">
+            <form id="socialMediaForm" class="admin-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">فيسبوك</label>
+                        <input type="url" id="facebookUrl" class="form-input" placeholder="https://facebook.com/yourpage">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">تويتر</label>
+                        <input type="url" id="twitterUrl" class="form-input" placeholder="https://twitter.com/youraccount">
+                    </div>
                 </div>
-                <div>
-                    <label class="form-label">تويتر</label>
-                    <input type="url" id="twitterUrl" class="form-input" placeholder="https://twitter.com/youraccount">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">انستغرام</label>
+                        <input type="url" id="instagramUrl" class="form-input" placeholder="https://instagram.com/youraccount">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">تيك توك</label>
+                        <input type="url" id="tiktokUrl" class="form-input" placeholder="https://tiktok.com/@youraccount">
+                    </div>
                 </div>
-                <div>
-                    <label class="form-label">انستغرام</label>
-                    <input type="url" id="instagramUrl" class="form-input" placeholder="https://instagram.com/youraccount">
-                </div>
-                <div>
-                    <label class="form-label">تيك توك</label>
-                    <input type="url" id="tiktokUrl" class="form-input" placeholder="https://tiktok.com/@youraccount">
-                </div>
-                <div>
-                    <label class="form-label">يوتيوب</label>
-                    <input type="url" id="youtubeUrl" class="form-input" placeholder="https://youtube.com/yourchannel">
-                </div>
-                <div>
-                    <label class="form-label">لينكد إن</label>
-                    <input type="url" id="linkedinUrl" class="form-input" placeholder="https://linkedin.com/yourcompany">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">يوتيوب</label>
+                        <input type="url" id="youtubeUrl" class="form-input" placeholder="https://youtube.com/yourchannel">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">لينكد إن</label>
+                        <input type="url" id="linkedinUrl" class="form-input" placeholder="https://linkedin.com/yourcompany">
+                    </div>
                 </div>
             </form>
         </div>
 
         <!-- معلومات التواصل -->
-        <div class="card">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-gray-800">معلومات التواصل</h3>
-                <button onclick="saveContactInfo()" class="btn-primary">
-                    <i class="fas fa-save ml-2"></i>حفظ التغييرات
-                </button>
+        <div class="admin-card">
+            <div class="card-header">
+                <h3 class="card-title">معلومات التواصل</h3>
+                <div class="card-actions">
+                    <button onclick="saveContactInfo()" class="btn btn-success">
+                        <i class="fas fa-save"></i>حفظ التغييرات
+                    </button>
+                </div>
             </div>
-            <form id="contactInfoForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="form-label">رقم الواتساب الرئيسي</label>
-                    <input type="tel" id="whatsappNumber" class="form-input" placeholder="201234567890">
+            <form id="contactInfoForm" class="admin-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">رقم الواتساب الرئيسي</label>
+                        <input type="tel" id="whatsappNumber" class="form-input" placeholder="201234567890">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رقم الهاتف الرئيسي</label>
+                        <input type="tel" id="phoneNumber" class="form-input" placeholder="201234567890">
+                    </div>
                 </div>
-                <div>
-                    <label class="form-label">رقم الهاتف الرئيسي</label>
-                    <input type="tel" id="phoneNumber" class="form-input" placeholder="201234567890">
-                </div>
-                <div class="md:col-span-2">
+                <div class="form-group">
                     <label class="form-label">البريد الإلكتروني</label>
                     <input type="email" id="emailAddress" class="form-input" placeholder="info@yourstore.com">
                 </div>
-                <div class="md:col-span-2">
+                <div class="form-group">
                     <label class="form-label">العنوان الرئيسي</label>
-                    <textarea id="mainAddress" class="form-input" rows="3" placeholder="العنوان الرئيسي للمتجر"></textarea>
+                    <textarea id="mainAddress" class="form-textarea" rows="3" placeholder="العنوان الرئيسي للمتجر"></textarea>
                 </div>
             </form>
         </div>
@@ -114,50 +129,54 @@ async function loadBranchesList() {
         
         if (branches.length === 0) {
             branchesList.innerHTML = `
-                <div class="text-center py-8">
-                    <i class="fas fa-map-marker-alt text-6xl text-gray-300 mb-4"></i>
-                    <h3 class="text-xl font-semibold text-gray-600 mb-2">لا توجد فروع حالياً</h3>
-                    <p class="text-gray-500 mb-4">أضف فرع جديد للبدء</p>
-                    <button onclick="addNewBranch()" class="btn-primary">
-                        <i class="fas fa-plus ml-2"></i>إضافة فرع جديد
+                <div class="empty-state">
+                    <i class="fas fa-map-marker-alt empty-state-icon"></i>
+                    <h3 class="empty-state-title">لا توجد فروع حالياً</h3>
+                    <p class="empty-state-description">أضف فرع جديد للبدء</p>
+                    <button onclick="addNewBranch()" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>إضافة فرع جديد
                     </button>
                 </div>
             `;
             return;
         }
 
-        branchesList.innerHTML = branches.map((branch, index) => `
-            <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start">
-                    <div class="flex-1">
-                        <h4 class="text-lg font-semibold text-gray-800 mb-2">${branch.name || 'فرع غير مسمى'}</h4>
-                        <p class="text-gray-600 mb-2">${branch.address || 'لا يوجد عنوان'}</p>
-                        ${branch.phone ? `<p class="text-sm text-gray-500"><i class="fas fa-phone ml-1"></i>${branch.phone}</p>` : ''}
-                        ${branch.mapUrl ? `
-                            <a href="${branch.mapUrl}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm mt-2 inline-block">
-                                <i class="fas fa-map ml-1"></i>عرض على الخريطة
-                            </a>
-                        ` : ''}
+        branchesList.innerHTML = `
+            <div class="list-group">
+                ${branches.map((branch, index) => `
+                    <div class="list-item">
+                        <div class="list-item-header">
+                            <div>
+                                <h4 class="list-item-title">${branch.name || 'فرع غير مسمى'}</h4>
+                                <p class="list-item-content">${branch.address || 'لا يوجد عنوان'}</p>
+                                ${branch.phone ? `<p class="list-item-content"><i class="fas fa-phone"></i> ${branch.phone}</p>` : ''}
+                                ${branch.mapUrl ? `
+                                    <a href="${branch.mapUrl}" target="_blank" class="btn btn-outline btn-sm mt-2">
+                                        <i class="fas fa-map"></i>عرض على الخريطة
+                                    </a>
+                                ` : ''}
+                            </div>
+                            <div class="list-item-actions">
+                                <button onclick="editBranch(${index})" class="btn btn-secondary btn-sm" title="تعديل">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="deleteBranch(${index})" class="btn btn-danger btn-sm" title="حذف">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex space-x-reverse space-x-2">
-                        <button onclick="editBranch(${index})" class="btn-secondary text-sm">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="deleteBranch(${index})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 text-sm">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
+                `).join('')}
             </div>
-        `).join('');
+        `;
 
     } catch (error) {
         console.error('Error loading branches:', error);
         document.getElementById('branchesList').innerHTML = `
-            <div class="text-center py-8">
-                <i class="fas fa-exclamation-triangle text-6xl text-red-300 mb-4"></i>
-                <h3 class="text-xl font-semibold text-red-600 mb-2">حدث خطأ</h3>
-                <p class="text-gray-500">لم يتم تحميل الفروع</p>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>حدث خطأ</strong><br>
+                لم يتم تحميل الفروع
             </div>
         `;
     }
@@ -222,32 +241,38 @@ async function loadContactInfo() {
 // إضافة فرع جديد
 window.addNewBranch = function() {
     const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    modal.className = 'modal-overlay';
     modal.innerHTML = `
-        <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <h3 class="text-xl font-bold mb-4">إضافة فرع جديد</h3>
-            <form onsubmit="saveNewBranch(event)">
-                <div class="mb-4">
-                    <label class="form-label">اسم الفرع *</label>
-                    <input type="text" id="newBranchName" class="form-input" required>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label">العنوان *</label>
-                    <textarea id="newBranchAddress" class="form-input" rows="3" required></textarea>
-                </div>
-                <div class="mb-4">
-                    <label class="form-label">رقم الهاتف</label>
-                    <input type="tel" id="newBranchPhone" class="form-input">
-                </div>
-                <div class="mb-4">
-                    <label class="form-label">رابط الخريطة (اختياري)</label>
-                    <input type="url" id="newBranchMapUrl" class="form-input" placeholder="https://maps.google.com/...">
-                </div>
-                <div class="flex justify-end space-x-reverse space-x-2">
-                    <button type="button" onclick="closeBranchModal()" class="btn-secondary">إلغاء</button>
-                    <button type="submit" class="btn-primary">حفظ</button>
-                </div>
-            </form>
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">إضافة فرع جديد</h3>
+                <button type="button" class="modal-close" onclick="closeBranchModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="newBranchForm" class="admin-form">
+                    <div class="form-group">
+                        <label class="form-label required">اسم الفرع</label>
+                        <input type="text" id="newBranchName" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required">العنوان</label>
+                        <textarea id="newBranchAddress" class="form-textarea" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رقم الهاتف</label>
+                        <input type="tel" id="newBranchPhone" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">رابط الخريطة (اختياري)</label>
+                        <input type="url" id="newBranchMapUrl" class="form-input" placeholder="https://maps.google.com/...">
+                        <small class="text-gray-500">انسخ رابط المشاركة من خرائط Google</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="closeBranchModal()" class="btn btn-outline">إلغاء</button>
+                <button type="submit" form="newBranchForm" class="btn btn-primary">حفظ الفرع</button>
+            </div>
         </div>
     `;
     document.body.appendChild(modal);
@@ -277,10 +302,7 @@ window.saveNewBranch = async function(event) {
 
         closeBranchModal();
         await loadBranchesList();
-        
-        if (typeof window.showToast === 'function') {
-            window.showToast('تم إضافة الفرع بنجاح', 'success');
-        }
+        showToast('تم إضافة الفرع بنجاح', 'success');
 
     } catch (error) {
         console.error('Error saving branch:', error);
@@ -292,7 +314,8 @@ window.saveNewBranch = async function(event) {
 
 // حذف فرع
 window.deleteBranch = async function(index) {
-    if (!confirm('هل أنت متأكد من حذف هذا الفرع؟')) return;
+    const confirmed = await confirmDialog('هل أنت متأكد من حذف هذا الفرع؟', 'حذف الفرع');
+    if (!confirmed) return;
 
     try {
         const settingsRef = collection(db, 'settings');
@@ -309,16 +332,11 @@ window.deleteBranch = async function(index) {
         }
 
         await loadBranchesList();
-        
-        if (typeof window.showToast === 'function') {
-            window.showToast('تم حذف الفرع بنجاح', 'success');
-        }
+        showToast('تم حذف الفرع بنجاح', 'success');
 
     } catch (error) {
         console.error('Error deleting branch:', error);
-        if (typeof window.showToast === 'function') {
-            window.showToast('حدث خطأ أثناء حذف الفرع', 'error');
-        }
+        showToast('حدث خطأ أثناء حذف الفرع', 'error');
     }
 };
 
@@ -340,15 +358,11 @@ window.saveSocialMedia = async function() {
             });
         }
 
-        if (typeof window.showToast === 'function') {
-            window.showToast('تم حفظ وسائل التواصل الاجتماعي بنجاح', 'success');
-        }
+        showToast('تم حفظ وسائل التواصل الاجتماعي بنجاح', 'success');
 
     } catch (error) {
         console.error('Error saving social media:', error);
-        if (typeof window.showToast === 'function') {
-            window.showToast('حدث خطأ أثناء الحفظ', 'error');
-        }
+        showToast('حدث خطأ أثناء الحفظ', 'error');
     }
 };
 
@@ -368,21 +382,17 @@ window.saveContactInfo = async function() {
             });
         }
 
-        if (typeof window.showToast === 'function') {
-            window.showToast('تم حفظ معلومات التواصل بنجاح', 'success');
-        }
+        showToast('تم حفظ معلومات التواصل بنجاح', 'success');
 
     } catch (error) {
         console.error('Error saving contact info:', error);
-        if (typeof window.showToast === 'function') {
-            window.showToast('حدث خطأ أثناء الحفظ', 'error');
-        }
+        showToast('حدث خطأ أثناء الحفظ', 'error');
     }
 };
 
 // إغلاق النافذة المنبثقة
 window.closeBranchModal = function() {
-    const modal = document.querySelector('.fixed.inset-0');
+    const modal = document.querySelector('.modal-overlay');
     if (modal) {
         modal.remove();
     }
