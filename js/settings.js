@@ -69,15 +69,6 @@ export async function loadSettings() {
                             <small class="text-gray-500">معرف تتبع Google Analytics</small>
                         </div>
 
-                        <div class="form-group">
-                            <label class="flex items-center">
-                                <input type="checkbox" id="showBanner" ${settings.showBanner !== false ? 'checked' : ''} 
-                                       class="ml-2" style="width: auto;">
-                                إظهار بانر المتجر الرئيسي
-                            </label>
-                            <small class="text-gray-500">إلغاء التحديد سيخفي البانر عن جميع العملاء</small>
-                        </div>
-
                         <button type="submit" class="btn-primary w-full">
                             <i class="fas fa-save ml-2"></i>حفظ الإعدادات
                         </button>
@@ -600,7 +591,6 @@ async function getSettings() {
         gridColumnsTablet: 3,
         gridColumnsDesktop: 4,
         heroScrollImages: [],
-        showBanner: true, // البانر يظهر افتراضياً
         branches: []
     };
 }
@@ -615,7 +605,6 @@ window.saveGeneralSettings = async function(event) {
     const storeDescription = document.getElementById('storeDescription').value;
     const storeKeywords = document.getElementById('storeKeywords').value;
     const googleAnalyticsId = document.getElementById('googleAnalyticsId').value;
-    const showBanner = document.getElementById('showBanner').checked;
     const logoFile = document.getElementById('storeLogo').files[0];
     const defaultProductFileInput = document.getElementById('defaultProductImageFile');
     const defaultProductFile = defaultProductFileInput && defaultProductFileInput.files ? defaultProductFileInput.files[0] : null;
@@ -671,7 +660,6 @@ window.saveGeneralSettings = async function(event) {
             storeDescription,
             storeKeywords,
             googleAnalyticsId,
-            showBanner,
             storeLogo,
             logoPublicId,
             defaultProductImage,
